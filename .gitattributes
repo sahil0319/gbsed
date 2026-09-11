@@ -1,0 +1,5 @@
+# Keep LF so a clone made on Windows still runs under WSL.
+*.py  text eol=lf
+*.sh  text eol=lf
+*.md  text eol=lf
+*.yaml text eol=lf
