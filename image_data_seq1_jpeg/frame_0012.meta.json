@@ -1,0 +1,172 @@
+{
+  "frame": 12,
+  "stem": "frame_0012",
+  "bin": "frame_0012.bin",
+  "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097108.jpg",
+  "mode": "matched",
+  "codec": "jpeg",
+  "n_bytes": 1473,
+  "gbsed_n_bytes": 1642,
+  "budget_bytes": 1642,
+  "resolution": [
+    256,
+    144
+  ],
+  "quality": 5,
+  "sha256": "bf17dd1a5dfa8835e04e5323d6d01c39584797a08d25c3114fe7bcc017dfee2f",
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ],
+      [
+        "car_1",
+        "car",
+        1
+      ],
+      [
+        "car_2",
+        "car",
+        1
+      ],
+      [
+        "car_3",
+        "car",
+        1
+      ],
+      [
+        "car_4",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inSFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "car_0",
+        "super_near",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "inSFrontOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "car_1",
+        "toLeftOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "very_near",
+        "ego car"
+      ],
+      [
+        "car_2",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "car_3",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "car_4",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "ego car",
+        "atSRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "atSRearOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "super_near",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "toRightOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "very_near",
+        "car_1"
+      ]
+    ],
+    "n_nodes": 10,
+    "n_edges": 19
+  },
+  "encode_seconds": 0.163,
+  "note": ""
+}

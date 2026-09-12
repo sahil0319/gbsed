@@ -1,0 +1,152 @@
+{
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/Config/pipeline_extraction.yaml",
+  "n_frames": 20,
+  "n_skipped": 0,
+  "total_bytes": 22000,
+  "frames": [
+    {
+      "frame": 0,
+      "bin": "frame_0000.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097097.jpg",
+      "n_bytes": 1000,
+      "sha256": "f47776b71c2cf40606623a965fc7167712fbb975ddc2b4b930b96b91a4a42c8e"
+    },
+    {
+      "frame": 1,
+      "bin": "frame_0001.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097098.jpg",
+      "n_bytes": 1000,
+      "sha256": "0a03beb4dd13474aeb397442c59106d936b155693404b7a76db32cf02edba61f"
+    },
+    {
+      "frame": 2,
+      "bin": "frame_0002.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097099.jpg",
+      "n_bytes": 1000,
+      "sha256": "b3247cabbb38f18551382f099c042a9a28b88a25d55ea2b3f510cf437afcc1ab"
+    },
+    {
+      "frame": 3,
+      "bin": "frame_0003.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097100.jpg",
+      "n_bytes": 1000,
+      "sha256": "c16747793a9fac5c0d45535d262f5a15dcd886ab8dd6b94b2b1291cc50066f23"
+    },
+    {
+      "frame": 4,
+      "bin": "frame_0004.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097100.png",
+      "n_bytes": 1000,
+      "sha256": "c16747793a9fac5c0d45535d262f5a15dcd886ab8dd6b94b2b1291cc50066f23"
+    },
+    {
+      "frame": 5,
+      "bin": "frame_0005.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097101.jpg",
+      "n_bytes": 1000,
+      "sha256": "a23f7aecd83998a3af1e98e4c6895b76a8d48fe496e018d911037c97c947ea42"
+    },
+    {
+      "frame": 6,
+      "bin": "frame_0006.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097102.jpg",
+      "n_bytes": 1000,
+      "sha256": "26bec821278daea066e9d83f7313b1989c85d646e35e11e228ba7c19acb09c2a"
+    },
+    {
+      "frame": 7,
+      "bin": "frame_0007.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097103.jpg",
+      "n_bytes": 1000,
+      "sha256": "979af9e415a1c7fada89c97e9ddbbc0892161e672b3c33c5e172b53aa146c79a"
+    },
+    {
+      "frame": 8,
+      "bin": "frame_0008.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097104.jpg",
+      "n_bytes": 1000,
+      "sha256": "e98489e8df02e9b6e3c2015e64b624bcba2f3d772f57c8073d7f791473fde389"
+    },
+    {
+      "frame": 9,
+      "bin": "frame_0009.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097105.jpg",
+      "n_bytes": 1000,
+      "sha256": "74b934dac14d9963eefaa28d269169fdbf1a99cf87cdec23a85c2312d3341c10"
+    },
+    {
+      "frame": 10,
+      "bin": "frame_0010.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097106.jpg",
+      "n_bytes": 1000,
+      "sha256": "4e6767408d343d4290ae1c4ae103a2a8f09d796096a7466f156ee73adf71e722"
+    },
+    {
+      "frame": 11,
+      "bin": "frame_0011.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097107.jpg",
+      "n_bytes": 1000,
+      "sha256": "2cb78789b896ee682b9f78b466708152cedce39050ee81c732f761f9aaa1ebcf"
+    },
+    {
+      "frame": 12,
+      "bin": "frame_0012.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097108.jpg",
+      "n_bytes": 2000,
+      "sha256": "26d92b4737ecbb4a90646f02d34f30b16ff591db14d84dabd337be838a094b9a"
+    },
+    {
+      "frame": 13,
+      "bin": "frame_0013.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097109.jpg",
+      "n_bytes": 2000,
+      "sha256": "763f5b2475892fff07771a89046657cea76c4d2037c9ee1706b150022ecd2231"
+    },
+    {
+      "frame": 14,
+      "bin": "frame_0014.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097110.jpg",
+      "n_bytes": 1000,
+      "sha256": "5918a98749643ccae7da126ceb5e5cbaef8f28211829a6172aaee480b73a4647"
+    },
+    {
+      "frame": 15,
+      "bin": "frame_0015.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097111.jpg",
+      "n_bytes": 1000,
+      "sha256": "e7a4cfe78180da04148133eccafe49922f748689b113c7953541d3d82d0ba2c9"
+    },
+    {
+      "frame": 16,
+      "bin": "frame_0016.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097112.jpg",
+      "n_bytes": 1000,
+      "sha256": "34e527e6611b91a536e845743dc88a19cdb51d823237ca9b520fdf34bf288fb8"
+    },
+    {
+      "frame": 17,
+      "bin": "frame_0017.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097113.jpg",
+      "n_bytes": 1000,
+      "sha256": "b597cff1f0716edec524c87223136453d9ac517cc9b9050250c809c7b84f3bcc"
+    },
+    {
+      "frame": 18,
+      "bin": "frame_0018.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097114.jpg",
+      "n_bytes": 1000,
+      "sha256": "de5f1ba5dbb7361a63604fc7edc6da191794c6a34b961bce9f4999d654796ac5"
+    },
+    {
+      "frame": 19,
+      "bin": "frame_0019.bin",
+      "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097114.png",
+      "n_bytes": 1000,
+      "sha256": "de5f1ba5dbb7361a63604fc7edc6da191794c6a34b961bce9f4999d654796ac5"
+    }
+  ],
+  "skipped": [],
+  "omnetpp_filePath": "scene_data/frame_0000.bin;scene_data/frame_0001.bin;scene_data/frame_0002.bin;scene_data/frame_0003.bin;scene_data/frame_0004.bin;scene_data/frame_0005.bin;scene_data/frame_0006.bin;scene_data/frame_0007.bin;scene_data/frame_0008.bin;scene_data/frame_0009.bin;scene_data/frame_0010.bin;scene_data/frame_0011.bin;scene_data/frame_0012.bin;scene_data/frame_0013.bin;scene_data/frame_0014.bin;scene_data/frame_0015.bin;scene_data/frame_0016.bin;scene_data/frame_0017.bin;scene_data/frame_0018.bin;scene_data/frame_0019.bin",
+  "staged_to": null
+}

@@ -1,0 +1,16 @@
+arm,config,noise_floor_dbm,frames,delivered,delivery_rate,graph_exact,graph_exact_rate,mean_f1_delivered,mean_f1_all,mean_actor_f1_delivered,risky_total,risky_preserved,risky_rate,detections,psnr
+GBSED (scene graph),Baseline,-98,20,14,0.7,14,0.7,1.0,0.7,1.0,32,32,1.0,0,
+GBSED (scene graph),Noise_Low,-95,20,11,0.55,11,0.55,1.0,0.55,1.0,24,24,1.0,0,
+GBSED (scene graph),Noise_Medium,-90,20,5,0.25,5,0.25,1.0,0.25,1.0,8,8,1.0,0,
+GBSED (scene graph),Noise_High,-85,20,1,0.05,1,0.05,1.0,0.05,1.0,0,0,0.0,0,
+GBSED (scene graph),CAV_Extreme,-80,20,0,0.0,0,0.0,0.0,0.0,0.0,0,0,0.0,0,
+WebP @ same bytes,Baseline,-98,20,14,0.7,0,0.0,0.3785,0.2649,0.0,32,0,0.0,18,28.1371
+WebP @ same bytes,Noise_Low,-95,20,11,0.55,0,0.0,0.3806,0.2094,0.0,24,0,0.0,14,27.9473
+WebP @ same bytes,Noise_Medium,-90,20,5,0.25,0,0.0,0.3782,0.0945,0.0,8,0,0.0,4,28.328
+WebP @ same bytes,Noise_High,-85,20,1,0.05,0,0.0,0.3636,0.0182,0.0,0,0,0.0,0,27.64
+WebP @ same bytes,CAV_Extreme,-80,20,0,0.0,0,0.0,0.0,0.0,0.0,0,0,0.0,0,
+JPEG @ same bytes,Baseline,-98,20,14,0.7,0,0.0,0.3859,0.2701,0.0,32,0,0.0,0,22.6471
+JPEG @ same bytes,Noise_Low,-95,20,11,0.55,0,0.0,0.3901,0.2145,0.0,24,0,0.0,0,22.3273
+JPEG @ same bytes,Noise_Medium,-90,20,5,0.25,0,0.0,0.3782,0.0945,0.0,8,0,0.0,0,22.564
+JPEG @ same bytes,Noise_High,-85,20,1,0.05,0,0.0,0.3636,0.0182,0.0,0,0,0.0,0,22.37
+JPEG @ same bytes,CAV_Extreme,-80,20,0,0.0,0,0.0,0.0,0.0,0.0,0,0,0.0,0,

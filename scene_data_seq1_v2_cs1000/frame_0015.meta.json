@@ -1,0 +1,172 @@
+{
+  "frame": 15,
+  "stem": "frame_0015",
+  "bin": "frame_0015.bin",
+  "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097111.jpg",
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/Config/pipeline_extraction.yaml",
+  "n_bytes": 1000,
+  "format": "v2",
+  "chunk_size": 1000,
+  "v2": {
+    "format": "v2",
+    "chunk_size": 1000,
+    "n_blocks": 1,
+    "n_bytes": 1000,
+    "useful_bytes": 440,
+    "padding_bytes": 560,
+    "padding_frac": 0.56,
+    "slices_per_block": [
+      [
+        7,
+        0,
+        2,
+        4
+      ]
+    ],
+    "slice_bytes": 74
+  },
+  "v1_equivalent_bytes": 436,
+  "n_float16": 218,
+  "sha256": "e7a4cfe78180da04148133eccafe49922f748689b113c7953541d3d82d0ba2c9",
+  "labels": [
+    8,
+    0,
+    5,
+    5,
+    5,
+    1
+  ],
+  "actor_names": [
+    "road",
+    "ego_car",
+    "lane",
+    "lane",
+    "lane",
+    "car"
+  ],
+  "active_relation_indexes": [
+    0,
+    2,
+    4,
+    7
+  ],
+  "active_relation_names": [
+    "isIn",
+    "inSFrontOf",
+    "atSRearOf",
+    "near_coll"
+  ],
+  "T_shape": [
+    12,
+    6,
+    6
+  ],
+  "compT_shape": [
+    4,
+    6,
+    6
+  ],
+  "feature_shape": [
+    6,
+    10
+  ],
+  "compression_ratio": 0.3333,
+  "detections": [
+    {
+      "coco_id": 3,
+      "coco_name": "car",
+      "score": 0.993,
+      "box": [
+        716.7,
+        405.6,
+        1274.5,
+        712.4
+      ]
+    }
+  ],
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inSFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "car_0",
+        "near_coll",
+        "ego car"
+      ],
+      [
+        "ego car",
+        "atSRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "near_coll",
+        "car_0"
+      ]
+    ],
+    "n_nodes": 6,
+    "n_edges": 9
+  },
+  "encode_seconds": 0.816
+}

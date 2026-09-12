@@ -1,0 +1,21 @@
+frame,source_image,sent_bytes,gbsed_bytes,received_bytes,status,bit_exact,tx_resolution,rx_resolution,psnr_db,n_detections,nodes_orig,nodes_rec,edges_orig,edges_rec,edges_common,nodes_match,edge_precision,edge_recall,edge_f1,risky_orig,risky_rec,risky_preserved,note
+0,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097097.jpg,646,762,646,DEGRADED,True,256x144,256x144,27.64,0,7,5,18,4,4,False,1.0,0.2222,0.3636,0,0,0,detector found nothing in the received frame
+1,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097098.jpg,858,862,858,DEGRADED,True,256x144,256x144,28.5,1,7,5,18,4,4,False,1.0,0.2222,0.3636,2,0,0,
+2,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097099.jpg,858,862,858,DEGRADED,True,256x144,256x144,28.4,3,7,5,18,4,4,False,1.0,0.2222,0.3636,2,0,0,
+3,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097100.jpg,852,862,852,DEGRADED,True,256x144,256x144,28.55,0,7,5,16,4,4,False,1.0,0.25,0.4,2,0,0,detector found nothing in the received frame
+4,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097100.png,852,862,852,DEGRADED,True,256x144,256x144,28.55,0,7,5,16,4,4,False,1.0,0.25,0.4,2,0,0,detector found nothing in the received frame
+5,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097101.jpg,664,862,664,DEGRADED,True,256x144,256x144,27.69,2,7,5,16,4,4,False,1.0,0.25,0.4,2,0,0,
+6,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097102.jpg,666,862,666,DEGRADED,True,256x144,256x144,27.66,2,7,6,16,11,4,False,0.3636,0.25,0.2963,2,0,0,
+7,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097103.jpg,720,862,720,DEGRADED,True,256x144,256x144,27.64,1,7,5,16,4,4,False,1.0,0.25,0.4,2,0,0,
+8,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097104.jpg,686,862,686,DEGRADED,True,256x144,256x144,27.63,2,7,5,16,4,4,False,1.0,0.25,0.4,2,0,0,
+9,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097105.jpg,732,762,732,DEGRADED,True,256x144,256x144,27.59,1,7,5,16,4,4,False,1.0,0.25,0.4,4,0,0,
+10,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097106.jpg,696,762,696,DEGRADED,True,256x144,256x144,27.57,2,7,5,16,4,4,False,1.0,0.25,0.4,4,0,0,
+11,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097107.jpg,704,762,704,DEGRADED,True,256x144,256x144,27.67,0,7,5,16,4,4,False,1.0,0.25,0.4,4,0,0,detector found nothing in the received frame
+12,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097108.jpg,1572,1642,1572,DEGRADED,True,384x216,384x216,29.78,2,10,5,19,4,4,False,1.0,0.2105,0.3478,2,0,0,
+13,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097109.jpg,1208,1354,1208,DEGRADED,True,384x216,384x216,29.05,2,9,5,18,4,4,False,1.0,0.2222,0.3636,2,0,0,
+14,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097110.jpg,364,436,0,LOST,False,160x90,,,0,6,0,9,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver
+15,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097111.jpg,350,436,0,LOST,False,160x90,,,0,6,0,9,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver
+16,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097112.jpg,366,436,0,LOST,False,160x90,,,0,6,0,9,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver
+17,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097113.jpg,470,562,0,LOST,False,192x108,,,0,7,0,10,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver
+18,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097114.jpg,670,704,0,LOST,False,256x144,,,0,8,0,11,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver
+19,/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097114.png,670,704,0,LOST,False,256x144,,,0,8,0,11,0,0,False,0.0,0.0,0.0,2,0,0,never completed at the receiver

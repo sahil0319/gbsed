@@ -178,14 +178,31 @@ plausible-but-wrong graph rather than raising. The decoder compares the
 received SHA-256 against `meta.json` and reports `payload differs from sent
 bytes`, but that is a post-hoc check, not protection.
 
-**All-or-nothing frames.** A single lost chunk means the file never completes
-and the whole frame is `LOST`. The range sweep shows this directly: a
-two-chunk frame near the cliff can have chunk 0 arrive and chunk 1 dropped,
-and the entire scene graph is discarded for one missing relation slice. Since
-`sem_compression` already splits the graph into independent relation slices,
-laying the payload out as *chunk 0 = labels+features, chunk k = relation
-slice L[k]* would degrade such a frame by one relation type instead of losing
-it. Not implemented.
+**All-or-nothing frames — solved by `--format v2`.** With the default v1
+layout a single lost chunk loses the frame: the payload is one flat vector and
+`format_loading` cannot parse a truncated one.
+
+`--format v2 --chunk-size N` instead packs whole relation slices into blocks
+of exactly N bytes, each self-describing, safety relations first. A lost block
+costs the relation types it carried. `N` must match `appl.chunkSize` in
+`omnetpp.ini`, and must be at least `gbsed_semantic.min_chunk_size()` for the
+densest frame (434 B for seq1; slices grow as 2·N²).
+
+Measured on seq1 at 500 B chunks, same delivery, same channel:
+
+| config | safety recall, v1 | safety recall, v2 |
+|---|---|---|
+| Noise_Low | 0.80 | **1.00** |
+| Noise_Medium | 0.50 | **1.00** |
+
+Cost: zero extra chunks on the wire at 1000 B, one extra at 500 B. At 1000 B
+the formats are indistinguishable on this sequence, because only 2 of 20
+frames span more than one chunk.
+
+Requires `writePartialFiles` (default true) so the receiver hands over
+incomplete files. Note that this also makes a truncated **v1** payload parse
+without complaint into a silently wrong graph — prefer v2 when partial writing
+is on.
 
 ## Module layout
 

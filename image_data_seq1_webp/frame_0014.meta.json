@@ -1,0 +1,102 @@
+{
+  "frame": 14,
+  "stem": "frame_0014",
+  "bin": "frame_0014.bin",
+  "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097110.jpg",
+  "mode": "matched",
+  "codec": "webp",
+  "n_bytes": 364,
+  "gbsed_n_bytes": 436,
+  "budget_bytes": 436,
+  "resolution": [
+    160,
+    90
+  ],
+  "quality": 1,
+  "sha256": "0286b1481956dc6e55b4898fd71b6d84d0ef81e635f1d3e086a06ea5969b2c09",
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inSFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "car_0",
+        "near_coll",
+        "ego car"
+      ],
+      [
+        "ego car",
+        "atSRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "near_coll",
+        "car_0"
+      ]
+    ],
+    "n_nodes": 6,
+    "n_edges": 9
+  },
+  "encode_seconds": 1.287,
+  "note": ""
+}

@@ -1,0 +1,11 @@
+payload_set,config,frames_total,frames_delivered,delivery_rate,graph_exact,mean_edge_f1_delivered,mean_edge_f1_all,total_detections,mean_psnr_db
+image_data_seq1_webp,Baseline,20,14,0.7,0,0.3785,0.2649,18,28.14
+image_data_seq1_webp,Noise_Low,20,11,0.55,0,0.3806,0.2094,14,27.95
+image_data_seq1_webp,Noise_Medium,20,5,0.25,0,0.3782,0.0945,4,28.33
+image_data_seq1_webp,Noise_High,20,1,0.05,0,0.3636,0.0182,0,27.64
+image_data_seq1_webp,CAV_Extreme,20,0,0.0,0,0.0,0.0,0,
+image_data_seq1_jpeg,Baseline,20,14,0.7,0,0.3859,0.2701,0,22.65
+image_data_seq1_jpeg,Noise_Low,20,11,0.55,0,0.3901,0.2145,0,22.33
+image_data_seq1_jpeg,Noise_Medium,20,5,0.25,0,0.3782,0.0945,0,22.56
+image_data_seq1_jpeg,Noise_High,20,1,0.05,0,0.3636,0.0182,0,22.37
+image_data_seq1_jpeg,CAV_Extreme,20,0,0.0,0,0.0,0.0,0,

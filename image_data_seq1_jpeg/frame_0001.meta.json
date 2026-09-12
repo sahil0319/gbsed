@@ -1,0 +1,152 @@
+{
+  "frame": 1,
+  "stem": "frame_0001",
+  "bin": "frame_0001.bin",
+  "source_image": "/Users/mahdisahil/Desktop/PythonEnvs/gbsed/images_seq1/00097098.jpg",
+  "mode": "matched",
+  "codec": "jpeg",
+  "n_bytes": 812,
+  "gbsed_n_bytes": 862,
+  "budget_bytes": 862,
+  "resolution": [
+    128,
+    72
+  ],
+  "quality": 1,
+  "sha256": "0aedac8d8ea90439923b2928ca56fa8f859957d9e116b17a04febb2dc0ad221d",
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ],
+      [
+        "car_1",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inDFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Right Lane"
+      ],
+      [
+        "car_0",
+        "super_near",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "toRightOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "inDFrontOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "car_1",
+        "toLeftOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "very_near",
+        "ego car"
+      ],
+      [
+        "ego car",
+        "atDRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "atDRearOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "super_near",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "toLeftOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "toRightOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "very_near",
+        "car_1"
+      ]
+    ],
+    "n_nodes": 7,
+    "n_edges": 18
+  },
+  "encode_seconds": 0.204,
+  "note": ""
+}

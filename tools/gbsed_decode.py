@@ -143,6 +143,17 @@ def main():
             "edges_orig": meta["graph"]["n_edges"], "edges_rec": 0,
             "edges_common": 0, "nodes_match": False,
             "edge_precision": 0.0, "edge_recall": 0.0, "edge_f1": 0.0,
+            "actor_edges_orig": len(gs.actor_edges(
+                [tuple(e) for e in meta["graph"]["edges"]])),
+            "actor_edges_rec": 0, "actor_edges_common": 0,
+            "actor_edge_precision": 0.0, "actor_edge_recall": 0.0,
+            "actor_edge_f1": 0.0,
+            "risky_orig": len(gs.risky_edges(
+                [tuple(e) for e in meta["graph"]["edges"]])),
+            "risky_rec": 0, "risky_preserved": 0,
+            "format": meta.get("format", "v1"),
+            "blocks_missing": "", "relations_recovered": "",
+            "relations_sent": len(meta.get("active_relation_indexes", []) or []),
             "tx_time": "", "rx_time": "", "distance_m": "",
             "chunks_sent": "", "chunks_heard": 0,
             "note": "",
@@ -186,7 +197,10 @@ def main():
         row["bit_exact"] = (gs.sha256_of(raw) == meta["sha256"])
 
         try:
-            rec_sg, _detail = gs.decode_payload(ae, raw)
+            # meta is authoritative about the format; sniffing is the fallback
+            # for payloads decoded without their metadata.
+            rec_sg, _detail = gs.decode_payload(
+                ae, raw, meta.get("chunk_size"), meta.get("format"))
         except Exception as e:
             row["status"] = "CORRUPT"
             row["note"] = "%s: %s" % (type(e).__name__, e)
@@ -197,20 +211,29 @@ def main():
             continue
 
         ok, lines, stats = gs.compare_summary(meta["graph"], rec_sg)
+        em = gs.edge_metrics(meta["graph"]["edges"], gs.edge_set(rec_sg))
 
-        common, n_rec, n_orig = (stats["n_edges_common"],
-                                 stats["n_edges_rec"], stats["n_edges_orig"])
-        prec = common / n_rec if n_rec else 0.0
-        rec_ = common / n_orig if n_orig else 0.0
-        f1 = 2 * prec * rec_ / (prec + rec_) if (prec + rec_) else 0.0
+        n_rec, n_orig = stats["n_edges_rec"], stats["n_edges_orig"]
+        f1 = em["edge_f1"]
 
         row.update({
             "status": "EXACT" if ok else "DEGRADED",
             "nodes_rec": stats["n_nodes_rec"], "edges_rec": n_rec,
-            "edges_common": common, "nodes_match": stats["nodes_match"],
-            "edge_precision": round(prec, 4), "edge_recall": round(rec_, 4),
-            "edge_f1": round(f1, 4),
+            "edges_common": stats["n_edges_common"],
+            "nodes_match": stats["nodes_match"],
         })
+        row.update(em)
+
+        # v2 only: which blocks failed the magic check, and therefore which
+        # relation slices never arrived. Without this a partially delivered
+        # frame is indistinguishable from a genuinely sparse scene.
+        row["blocks_missing"] = len(_detail.get("blocks_missing", []) or [])
+        row["relations_recovered"] = len(_detail.get("relations_recovered", []) or [])
+        if row["blocks_missing"]:
+            row["note"] = "partial: %d block(s) lost, %d/%d relations recovered" % (
+                row["blocks_missing"], row["relations_recovered"],
+                row["relations_sent"])
+
         if not row["bit_exact"] and not row["note"]:
             row["note"] = "payload differs from sent bytes"
 
@@ -252,8 +275,15 @@ def main():
     if corrupt:
         print("  undecodable    : %d" % len(corrupt))
     if delivered:
-        mean_f1 = sum(r["edge_f1"] for r in delivered) / len(delivered)
-        print("mean edge F1     : %.3f (over delivered frames)" % mean_f1)
+        print("mean edge F1     : %.3f | delivered, %.3f | all frames"
+              % (sum(r["edge_f1"] for r in delivered) / len(delivered),
+                 sum(r["edge_f1"] for r in rows) / n))
+        print("mean actor F1    : %.3f | delivered  (skeleton excluded)"
+              % (sum(r["actor_edge_f1"] for r in delivered) / len(delivered)))
+    ro = sum(r["risky_orig"] for r in delivered)
+    rp = sum(r["risky_preserved"] for r in delivered)
+    print("safety relations : %d of %d preserved on delivered frames%s"
+          % (rp, ro, "" if not ro else "  (%.1f%%)" % (100.0 * rp / ro)))
     print("fidelity.csv     : %s" % csv_path)
     if args.visualize:
         print("renders          : %s" % pngdir)

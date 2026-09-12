@@ -99,6 +99,13 @@ def main():
                          "used to report when the last chunk goes out")
     ap.add_argument("--start-time", type=float, default=10.0,
                     help="appl.startTime in the scenario, seconds")
+    ap.add_argument("--format", choices=["v1", "v2"], default="v1",
+                    help="v1 reproduces pipeline.GBSED._format_storage_ byte for "
+                         "byte; v2 aligns chunk boundaries with relation slices "
+                         "so a lost chunk costs relation types, not the frame")
+    ap.add_argument("--chunk-size", type=int, default=1000,
+                    help="must match appl.chunkSize in omnetpp.ini; v2 pads "
+                         "each block to exactly this size")
     ap.add_argument("--tx-budget", type=int, default=VEINS_TX_BUDGET,
                     help="chunks the scenario can transmit in one run; only "
                          "affects the warning printed at the end")
@@ -159,7 +166,7 @@ def main():
             continue
 
         try:
-            raw, detail = gs.encode_scene_graph(ae, sg)
+            raw, detail = gs.encode_scene_graph(ae, sg, args.format, args.chunk_size)
         except ValueError as e:
             print("%-5d %-28s %5s %6s %6s %8s  %s"
                   % (i, img.name[:28], sg.g.number_of_nodes(), "-", "-", "skip", e))
@@ -180,6 +187,10 @@ def main():
             "codebook": fingerprint,
             "config": str(cfg.yaml_path),
             "n_bytes": len(raw),
+            "format": args.format,
+            "chunk_size": args.chunk_size,
+            "v2": detail.get("v2"),
+            "v1_equivalent_bytes": detail.get("v1_equivalent_bytes"),
             "n_float16": detail["n_float16"],
             "sha256": gs.sha256_of(raw),
             "labels": [int(v) for v in detail["labels"]],
@@ -249,6 +260,12 @@ def main():
 
     print()
     print("encoded          : %d frame(s), %d skipped" % (len(entries), len(skipped)))
+    if args.format == "v2":
+        pad = sum(e["v2"]["padding_bytes"] for e in entries if e.get("v2"))
+        v1b = sum(e["v1_equivalent_bytes"] for e in entries)
+        print("format           : v2 slice-aligned, %d B blocks "
+              "(padding %d B = %.0f%%; v1 would be %d B)"
+              % (args.chunk_size, pad, 100.0 * pad / max(total_bytes, 1), v1b))
     print("total payload    : %d bytes (mean %.0f B/frame, max %d B)"
           % (total_bytes, total_bytes / len(entries),
              max(e["n_bytes"] for e in entries)))
@@ -257,7 +274,7 @@ def main():
         print("staged to        : %s" % staged_dir)
 
     # ---- transmission budget -------------------------------------------
-    chunk = 1000
+    chunk = args.chunk_size
     n_chunks = sum(-(-e["n_bytes"] // chunk) for e in entries)
     # Exactly one chunk per send event: the event that finishes a file also
     # loads the next one and reschedules at +2 s, so a file switch costs

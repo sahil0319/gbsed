@@ -1,0 +1,234 @@
+{
+  "experiment": "image_baseline",
+  "mode": "matched",
+  "codec": "jpeg",
+  "budget_scale": 1.0,
+  "n_frames": 20,
+  "total_bytes": 16230,
+  "gbsed_total_bytes": 16218,
+  "expansion_vs_gbsed": 1.0,
+  "n_chunks": 22,
+  "frames": [
+    {
+      "frame": 0,
+      "bin": "frame_0000.bin",
+      "n_bytes": 758,
+      "resolution": [
+        102,
+        58
+      ],
+      "quality": 1,
+      "sha256": "93092c1c823651b10d410b5e2296ed8e53d5c03cec6ab4364d84fc45d538a16e"
+    },
+    {
+      "frame": 1,
+      "bin": "frame_0001.bin",
+      "n_bytes": 812,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "0aedac8d8ea90439923b2928ca56fa8f859957d9e116b17a04febb2dc0ad221d"
+    },
+    {
+      "frame": 2,
+      "bin": "frame_0002.bin",
+      "n_bytes": 815,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "45ce4c3bb37bab33f911c260d4fb7c2c1b63a31b708797e0af267131677197cc"
+    },
+    {
+      "frame": 3,
+      "bin": "frame_0003.bin",
+      "n_bytes": 816,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "4f9a24bedaeec547bc258a7540916d3a3934b03cb15d2a81120939a5dfef6fdd"
+    },
+    {
+      "frame": 4,
+      "bin": "frame_0004.bin",
+      "n_bytes": 816,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "4f9a24bedaeec547bc258a7540916d3a3934b03cb15d2a81120939a5dfef6fdd"
+    },
+    {
+      "frame": 5,
+      "bin": "frame_0005.bin",
+      "n_bytes": 819,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "9e607470f91aad565eba8a8703537a69b464c98e99eb45b361c5dc6cc3cf5705"
+    },
+    {
+      "frame": 6,
+      "bin": "frame_0006.bin",
+      "n_bytes": 817,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "cdb69faa5cc90779afa0f55dfb17a805e521cddc60c58539e3956f87d8cc17b8"
+    },
+    {
+      "frame": 7,
+      "bin": "frame_0007.bin",
+      "n_bytes": 821,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "3febb923bdf082c4c8632189bce8ccf90cd0091cf85e9fe5678db0977069ef07"
+    },
+    {
+      "frame": 8,
+      "bin": "frame_0008.bin",
+      "n_bytes": 818,
+      "resolution": [
+        128,
+        72
+      ],
+      "quality": 1,
+      "sha256": "06cba98d24fca9bcb7673cb03a3328ac674d95fe28dc5162818b432a012786c5"
+    },
+    {
+      "frame": 9,
+      "bin": "frame_0009.bin",
+      "n_bytes": 760,
+      "resolution": [
+        102,
+        58
+      ],
+      "quality": 1,
+      "sha256": "5a7a6fdc56dd7c5c18031e6c305e4ab08caf5804d90558024229301009326814"
+    },
+    {
+      "frame": 10,
+      "bin": "frame_0010.bin",
+      "n_bytes": 758,
+      "resolution": [
+        102,
+        58
+      ],
+      "quality": 1,
+      "sha256": "23cd655e5333996fc61544efd5373270e45fde599c899061a66b1f4fb29fb4ff"
+    },
+    {
+      "frame": 11,
+      "bin": "frame_0011.bin",
+      "n_bytes": 757,
+      "resolution": [
+        102,
+        58
+      ],
+      "quality": 1,
+      "sha256": "90b8d7a554b712f4a91b0f4588a7ea98e46b4865266d43f125887e1bcade8d43"
+    },
+    {
+      "frame": 12,
+      "bin": "frame_0012.bin",
+      "n_bytes": 1473,
+      "resolution": [
+        256,
+        144
+      ],
+      "quality": 5,
+      "sha256": "bf17dd1a5dfa8835e04e5323d6d01c39584797a08d25c3114fe7bcc017dfee2f"
+    },
+    {
+      "frame": 13,
+      "bin": "frame_0013.bin",
+      "n_bytes": 1292,
+      "resolution": [
+        256,
+        144
+      ],
+      "quality": 1,
+      "sha256": "f778c315927c11c11c79353165f93c8a657e2c6f5ff2f0c43bba3b6cb5089d90"
+    },
+    {
+      "frame": 14,
+      "bin": "frame_0014.bin",
+      "n_bytes": 630,
+      "resolution": [
+        13,
+        7
+      ],
+      "quality": 1,
+      "sha256": "18e5b7b4be5c756a76e64357fc12647aa1571dd633c10586d74d2440f7f67fe4"
+    },
+    {
+      "frame": 15,
+      "bin": "frame_0015.bin",
+      "n_bytes": 630,
+      "resolution": [
+        13,
+        7
+      ],
+      "quality": 1,
+      "sha256": "18e5b7b4be5c756a76e64357fc12647aa1571dd633c10586d74d2440f7f67fe4"
+    },
+    {
+      "frame": 16,
+      "bin": "frame_0016.bin",
+      "n_bytes": 630,
+      "resolution": [
+        13,
+        7
+      ],
+      "quality": 1,
+      "sha256": "18e5b7b4be5c756a76e64357fc12647aa1571dd633c10586d74d2440f7f67fe4"
+    },
+    {
+      "frame": 17,
+      "bin": "frame_0017.bin",
+      "n_bytes": 630,
+      "resolution": [
+        13,
+        7
+      ],
+      "quality": 1,
+      "sha256": "18e5b7b4be5c756a76e64357fc12647aa1571dd633c10586d74d2440f7f67fe4"
+    },
+    {
+      "frame": 18,
+      "bin": "frame_0018.bin",
+      "n_bytes": 689,
+      "resolution": [
+        64,
+        36
+      ],
+      "quality": 1,
+      "sha256": "dad00cbae65b607282594c0292d2de46bd37c616829cab9df6926d188c9e0978"
+    },
+    {
+      "frame": 19,
+      "bin": "frame_0019.bin",
+      "n_bytes": 689,
+      "resolution": [
+        64,
+        36
+      ],
+      "quality": 1,
+      "sha256": "dad00cbae65b607282594c0292d2de46bd37c616829cab9df6926d188c9e0978"
+    }
+  ],
+  "omnetpp_filePath": "scene_data/frame_0000.bin;scene_data/frame_0001.bin;scene_data/frame_0002.bin;scene_data/frame_0003.bin;scene_data/frame_0004.bin;scene_data/frame_0005.bin;scene_data/frame_0006.bin;scene_data/frame_0007.bin;scene_data/frame_0008.bin;scene_data/frame_0009.bin;scene_data/frame_0010.bin;scene_data/frame_0011.bin;scene_data/frame_0012.bin;scene_data/frame_0013.bin;scene_data/frame_0014.bin;scene_data/frame_0015.bin;scene_data/frame_0016.bin;scene_data/frame_0017.bin;scene_data/frame_0018.bin;scene_data/frame_0019.bin"
+}

@@ -293,6 +293,213 @@ def unpack_from_bytes(raw):
 
 
 # --------------------------------------------------------------------------
+# 5b. Slice-aligned payload format ("v2")
+# --------------------------------------------------------------------------
+# format_storage() concatenates everything into one flat vector, so the
+# transport's fixed-size byte chunking cuts through the middle of relation
+# slices and feature rows. Lose one chunk and format_loading() runs off the
+# end of the buffer: the whole frame is discarded.
+#
+# sem_decompression() already tolerates a partial relation set -- it writes
+# each delivered slice to its index in T and leaves the rest zero, and cannot
+# distinguish "this relation was absent from the scene" from "this relation's
+# slice did not arrive". The capability is there; only the packing throws it
+# away.
+#
+# v2 fixes the packing. The payload is built as a whole number of blocks of
+# exactly `chunk_size` bytes, each block self-describing and holding only
+# COMPLETE relation slices. The transport still chunks naively at chunk_size,
+# so every network chunk is one self-contained block. A lost chunk costs the
+# relation types it carried, not the frame.
+#
+# Block 0 additionally carries the node block (labels + features); without it
+# there is no graph, so its loss is still fatal. Slices are ordered
+# safety-first so the most important ones ride in block 0.
+#
+# The cost is padding: a block is rarely filled exactly. pack_sliced reports
+# the overhead so it can be stated rather than hidden.
+
+V2_MAGIC = b"GBS2"
+V2_HEADER = 12          # magic(4) type(1) n_nodes(2) n_feat_cols(2) n_slices(1) pad(2)
+V2_SLICE_HEADER = 2     # relation index(1) + pad(1)
+
+# Slices are packed in this order of importance, so that degrading the tail of
+# a frame costs context before it costs safety. Anything not named here keeps
+# its natural order after these.
+#
+# Safety relations come FIRST, ahead of the structural `isIn`. At small chunk
+# sizes the node block leaves room for only one slice in block 0, and an
+# earlier ordering that led with `isIn` put near_coll in block 1 -- where
+# losing a single chunk cost every safety relation, which is precisely what
+# this format exists to prevent. `isIn` costs actor-F1 when dropped but never
+# costs a braking decision.
+V2_PRIORITY = ["near_coll", "super_near", "isIn", "very_near",
+               "inDFrontOf", "inSFrontOf", "atDRearOf", "atSRearOf",
+               "toLeftOf", "toRightOf", "near", "visible"]
+
+
+def _v2_order(L, rels):
+    """Indices into L, ordered safety-first."""
+    rank = {name: i for i, name in enumerate(V2_PRIORITY)}
+    return sorted(range(len(L)), key=lambda k: rank.get(rels[L[k]], len(rank) + L[k]))
+
+
+def min_chunk_size(n_nodes, n_feat_cols):
+    """Smallest chunk_size that can hold block 0: header + node block + one
+    slice. Slices grow as N^2, so this rises quickly with scene density."""
+    return (V2_HEADER + 2 * n_nodes + 2 * n_nodes * n_feat_cols
+            + V2_SLICE_HEADER + 2 * n_nodes * n_nodes)
+
+
+def pack_sliced(labels, feature_nodes, L, comp_T, rels, chunk_size=1000):
+    """Lay the payload out so chunk boundaries fall on slice boundaries.
+
+    Returns (payload_bytes, info). The payload length is an exact multiple of
+    chunk_size. Raises ValueError if a single slice cannot fit in one block --
+    with N nodes a slice is 2*N*N bytes, so chunk_size must exceed that plus
+    the headers.
+    """
+    import struct
+    n_nodes = len(labels)
+    n_cols = feature_nodes.shape[1]
+    slice_vals = n_nodes * n_nodes
+    slice_bytes = V2_SLICE_HEADER + 2 * slice_vals
+    node_bytes = 2 * n_nodes + 2 * feature_nodes.size
+
+    if V2_HEADER + node_bytes + slice_bytes > chunk_size:
+        raise ValueError(
+            "chunk_size=%d too small: block 0 needs %d B for the node block "
+            "plus one %d B slice (%d nodes)"
+            % (chunk_size, V2_HEADER + node_bytes + slice_bytes, slice_bytes, n_nodes))
+    if V2_HEADER + slice_bytes > chunk_size:
+        raise ValueError("chunk_size=%d cannot hold one %d B slice"
+                         % (chunk_size, slice_bytes))
+
+    def new_block(block_type, extra=b""):
+        return {"type": block_type, "body": bytearray(extra), "slices": []}
+
+    order = _v2_order(L, rels)
+    blocks = []
+    cur = new_block(0, np.asarray(labels, dtype=np.float16).tobytes()
+                    + feature_nodes.astype(np.float16).tobytes())
+
+    for k in order:
+        used = V2_HEADER + len(cur["body"])
+        if used + slice_bytes > chunk_size:
+            blocks.append(cur)
+            cur = new_block(1)
+        cur["body"] += struct.pack("<BB", int(L[k]), 0)
+        cur["body"] += comp_T[k].astype(np.float16).tobytes()
+        cur["slices"].append(int(L[k]))
+    blocks.append(cur)
+
+    out = bytearray()
+    for b in blocks:
+        head = V2_MAGIC + struct.pack("<BHHBxx", b["type"], n_nodes, n_cols,
+                                      len(b["slices"]))
+        block = head + bytes(b["body"])
+        out += block + b"\x00" * (chunk_size - len(block))
+
+    payload = bytes(out)
+    useful = V2_HEADER * len(blocks) + node_bytes + slice_bytes * len(L)
+    return payload, {
+        "format": "v2", "chunk_size": chunk_size, "n_blocks": len(blocks),
+        "n_bytes": len(payload), "useful_bytes": useful,
+        "padding_bytes": len(payload) - useful,
+        "padding_frac": round(1 - useful / len(payload), 4),
+        "slices_per_block": [b["slices"] for b in blocks],
+        "slice_bytes": slice_bytes,
+    }
+
+
+def unpack_sliced(raw, chunk_size=None):
+    """Recover whatever survived. Missing blocks are all-zero (the receiver
+    zero-fills its buffer), so they simply fail the magic check and are
+    skipped.
+
+    Returns (labels, feature_nodes, L, comp_T, info) or raises ValueError if
+    block 0 -- the node block -- did not arrive.
+    """
+    import struct
+    if chunk_size is None:
+        chunk_size = _v2_infer_chunk_size(raw)
+    n_blocks = len(raw) // chunk_size
+
+    labels = feats = None
+    slices = {}
+    present, missing = [], []
+
+    for b in range(n_blocks):
+        blk = raw[b * chunk_size:(b + 1) * chunk_size]
+        if blk[:4] != V2_MAGIC:
+            missing.append(b)
+            continue
+        present.append(b)
+        btype, n_nodes, n_cols, n_slices = struct.unpack("<BHHB", blk[4:10])
+        off = V2_HEADER
+        if btype == 0:
+            labels = np.frombuffer(blk, np.float16, n_nodes, off)
+            off += 2 * n_nodes
+            feats = np.frombuffer(blk, np.float16, n_nodes * n_cols, off
+                                  ).reshape(n_nodes, n_cols)
+            off += 2 * n_nodes * n_cols
+        for _ in range(n_slices):
+            rel_idx = blk[off]
+            off += V2_SLICE_HEADER
+            slices[rel_idx] = np.frombuffer(blk, np.float16, n_nodes * n_nodes, off
+                                            ).reshape(n_nodes, n_nodes)
+            off += 2 * n_nodes * n_nodes
+
+    if labels is None:
+        raise ValueError(
+            "node block missing (%d of %d blocks lost) -- the labels and "
+            "feature matrix live in block 0, so nothing can be decoded without it"
+            % (len(missing), len(missing) + len(present)))
+
+    L = sorted(slices)
+    comp_T = np.array([slices[i] for i in L], dtype=np.float16) if L else \
+        np.zeros((0, len(labels), len(labels)), dtype=np.float16)
+
+    return ([int(v) for v in labels], feats, L, comp_T,
+            {"blocks_present": present, "blocks_missing": missing,
+             "relations_recovered": L})
+
+
+def _v2_infer_chunk_size(raw):
+    """Block size is whatever stride puts V2_MAGIC at every block start."""
+    for cs in (200, 250, 300, 400, 500, 600, 700, 800, 1000, 1200, 1500, 2000):
+        if len(raw) % cs != 0:
+            continue
+        blocks = [raw[i:i + cs] for i in range(0, len(raw), cs)]
+        # Every block must either carry the magic or be entirely zero (lost).
+        # Block 0 itself may be the lost one, so do not require it.
+        if any(b[:4] == V2_MAGIC for b in blocks) and \
+           all(b[:4] == V2_MAGIC or not any(b) for b in blocks):
+            return cs
+    raise ValueError("cannot infer v2 chunk size from a %d byte payload" % len(raw))
+
+
+def is_v2(raw, chunk_size=None):
+    """True if this looks like a slice-aligned payload.
+
+    Checking only raw[:4] is not enough: block 0 is exactly the block that may
+    be missing, and a zeroed block 0 would make a v2 payload look like v1 and
+    be handed to format_loading(), which fails with a confusing reshape error
+    instead of saying the node block is gone. So scan every aligned position.
+    """
+    if raw[:4] == V2_MAGIC:
+        return True
+    if chunk_size:
+        return any(raw[i:i + 4] == V2_MAGIC
+                   for i in range(0, len(raw), chunk_size))
+    for cs in (200, 250, 300, 400, 500, 600, 700, 800, 1000, 1200, 1500, 2000):
+        if len(raw) % cs == 0 and any(raw[i:i + 4] == V2_MAGIC
+                                      for i in range(0, len(raw), cs)):
+            return True
+    return False
+
+
+# --------------------------------------------------------------------------
 # 6. Layer 1 -- image -> SceneGraph
 # --------------------------------------------------------------------------
 
@@ -387,16 +594,32 @@ def scene_graph_from_boxes(cfg, bev, boxes, labels, image_size,
 # 7. Layers 2-4 -- the round trip, as two callable halves
 # --------------------------------------------------------------------------
 
-def encode_scene_graph(ae, sg):
-    """SceneGraph -> (payload bytes, detail dict).  Layers 2 and 3."""
+def encode_scene_graph(ae, sg, fmt="v1", chunk_size=1000):
+    """SceneGraph -> (payload bytes, detail dict).  Layers 2 and 3.
+
+    fmt="v1" reproduces GBSED._format_storage_ byte for byte.
+    fmt="v2" uses the slice-aligned layout (see section 5b), which survives
+    partial delivery. Both carry identical information.
+    """
     labels, feat_nodes_mat, T = ae.encode(sg)
     comp_T, L = ae.sem_compression(T)
     if comp_T.size == 0:
         raise ValueError(
             "scene graph has no active relations; nothing to compress or send")
-    packed = format_storage(labels, feat_nodes_mat, L, comp_T)
-    raw = pack_to_bytes(packed)
+    if fmt == "v2":
+        raw, v2info = pack_sliced(labels, feat_nodes_mat, L, comp_T,
+                                  ae.rels, chunk_size)
+        packed = format_storage(labels, feat_nodes_mat, L, comp_T)  # for sizing only
+    elif fmt == "v1":
+        packed = format_storage(labels, feat_nodes_mat, L, comp_T)
+        raw = pack_to_bytes(packed)
+        v2info = None
+    else:
+        raise ValueError("unknown format %r" % fmt)
     return raw, {
+        "format": fmt,
+        "v2": v2info,
+        "v1_equivalent_bytes": int(packed.nbytes),
         "labels": labels,
         "feature_nodes_matrix": feat_nodes_mat,
         "compressed_Tensor": comp_T,
@@ -407,22 +630,106 @@ def encode_scene_graph(ae, sg):
     }
 
 
-def decode_payload(ae, raw):
-    """Payload bytes -> (SceneGraph', detail dict).  Layer 4."""
-    to_read = unpack_from_bytes(raw)
-    labels, feature_nodes, L, comp_T = format_loading(to_read)
-    sg = ae.decode(labels, feature_nodes, L, comp_T)
-    return sg, {
+def decode_payload(ae, raw, chunk_size=None, fmt=None):
+    """Payload bytes -> (SceneGraph', detail dict).  Layer 4.
+
+    Detects v2 by its magic and recovers whatever blocks arrived; a v1 payload
+    is parsed as before. For v2 the detail dict also reports which blocks were
+    missing and which relations survived, so partial delivery is visible in
+    the results rather than silently looking like a sparse scene.
+    """
+    if fmt == "v2" or (fmt is None and is_v2(raw, chunk_size)):
+        labels, feature_nodes, L, comp_T, info = unpack_sliced(raw, chunk_size)
+        sg = ae.decode(labels, feature_nodes, L, comp_T)
+        detail = {"format": "v2"}
+        detail.update(info)
+    else:
+        to_read = unpack_from_bytes(raw)
+        labels, feature_nodes, L, comp_T = format_loading(to_read)
+        sg = ae.decode(labels, feature_nodes, L, comp_T)
+        detail = {"format": "v1", "blocks_missing": [],
+                  "relations_recovered": L}
+    detail.update({
         "labels": labels,
         "feature_nodes_matrix": feature_nodes,
         "compressed_Tensor": comp_T,
         "indexes": L,
-    }
+    })
+    return sg, detail
 
 
 # --------------------------------------------------------------------------
 # 8. Inspection and comparison
 # --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# Task-level metrics
+# --------------------------------------------------------------------------
+# Every scene graph contains a fixed skeleton -- Root Road, ego car, and three
+# lanes, joined by `isIn` edges -- that is present whether or not anything was
+# detected in the frame.  It is ~38% of a typical edge set, so plain edge F1
+# has a floor around 0.38 that is earned by transmitting nothing at all about
+# the traffic.  These helpers separate what was actually perceived from that
+# free structure.
+
+RISKY_RELATIONS = {"near_coll", "super_near"}
+EGO_NAME = "ego car"
+SKELETON_NAMES = {"Root Road", "ego car", "Left Lane", "Right Lane", "Middle Lane"}
+
+
+def is_actor(node_name):
+    """Actors are the detected traffic participants: roadscene2vec names them
+    `<type>_<index>` (car_0, ped_2). The skeleton nodes never carry a suffix."""
+    return node_name not in SKELETON_NAMES
+
+
+def actor_edges(edges):
+    """Edges with at least one detected actor at an end -- i.e. everything the
+    frame had to be understood to produce."""
+    return {(s, r, d) for s, r, d in edges if is_actor(s) or is_actor(d)}
+
+
+def risky_edges(edges):
+    """The safety-critical subset: a close-proximity relation directly
+    involving the ego vehicle. This is what a braking decision reads, and the
+    same rule tools/generate_ground_truth.py uses to label a frame."""
+    return {(s, r, d) for s, r, d in edges
+            if r in RISKY_RELATIONS and (s == EGO_NAME or d == EGO_NAME)}
+
+
+def prf(common, n_rec, n_orig):
+    """(precision, recall, f1) from counts, 0.0 where undefined."""
+    p = common / n_rec if n_rec else 0.0
+    r = common / n_orig if n_orig else 0.0
+    f = 2 * p * r / (p + r) if (p + r) else 0.0
+    return p, r, f
+
+
+def edge_metrics(orig_edges, rec_edges):
+    """All the edge-level numbers both arms report, computed one way.
+
+    Returns a dict with the plain edge scores, the actor-only scores (the
+    skeleton floor removed), and the safety-relation counts.
+    """
+    o = {tuple(e) for e in orig_edges}
+    r = {tuple(e) for e in rec_edges}
+    ao, ar = actor_edges(o), actor_edges(r)
+    ro, rr = risky_edges(o), risky_edges(r)
+
+    p, rc, f1 = prf(len(o & r), len(r), len(o))
+    ap, arc, af1 = prf(len(ao & ar), len(ar), len(ao))
+
+    return {
+        "edge_precision": round(p, 4), "edge_recall": round(rc, 4),
+        "edge_f1": round(f1, 4),
+        "actor_edges_orig": len(ao), "actor_edges_rec": len(ar),
+        "actor_edges_common": len(ao & ar),
+        "actor_edge_precision": round(ap, 4), "actor_edge_recall": round(arc, 4),
+        "actor_edge_f1": round(af1, 4),
+        "risky_orig": len(ro), "risky_rec": len(rr),
+        "risky_preserved": len(ro & rr),
+    }
+
 
 def edge_set(sg):
     return sorted(

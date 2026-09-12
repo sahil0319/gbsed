@@ -9,3 +9,11 @@ __pycache__/
 # and tools/gbsed_decode.py; not source)
 scene_data/
 decoded/
+
+# The full-image baseline payloads are verbatim copies of images_seq1/ (24 MB).
+# Regenerate in seconds:
+#   python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 \
+#       --mode full --out image_data_seq1_full
+# The manifest and per-frame metadata ARE tracked -- they carry the measured
+# sizes and chunk counts the analysis cites.
+image_data_*_full/*.bin
