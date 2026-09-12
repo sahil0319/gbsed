@@ -1,0 +1,152 @@
+{
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/home/opp_env/default_workspace/gbsed/Config/pipeline_extraction.yaml",
+  "n_frames": 20,
+  "n_skipped": 0,
+  "total_bytes": 16218,
+  "frames": [
+    {
+      "frame": 0,
+      "bin": "frame_0000.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097097.jpg",
+      "n_bytes": 762,
+      "sha256": "dbb2d39d32088ecdc4ed839a06eda7cd418e7787809d31ad2fdf8711062ee1d4"
+    },
+    {
+      "frame": 1,
+      "bin": "frame_0001.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097098.jpg",
+      "n_bytes": 862,
+      "sha256": "ca0d130eddb991bb5ef1a7d41bc49cc2e6315e347cbadd51ec278b1165012fec"
+    },
+    {
+      "frame": 2,
+      "bin": "frame_0002.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097099.jpg",
+      "n_bytes": 862,
+      "sha256": "2ecb40a0e2175a11ec2088d6edc8e5b56f3f88ae2b6fcf72d8beb71fea911ceb"
+    },
+    {
+      "frame": 3,
+      "bin": "frame_0003.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097100.jpg",
+      "n_bytes": 862,
+      "sha256": "6cebe913d0be688c0b7732dadc44c7d30e2dfb06e84e20620d56b57603098d7c"
+    },
+    {
+      "frame": 4,
+      "bin": "frame_0004.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097100.png",
+      "n_bytes": 862,
+      "sha256": "6cebe913d0be688c0b7732dadc44c7d30e2dfb06e84e20620d56b57603098d7c"
+    },
+    {
+      "frame": 5,
+      "bin": "frame_0005.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097101.jpg",
+      "n_bytes": 862,
+      "sha256": "ba0e4e3e702a495061e3faa92548dd1f218f18cee6199fccd37b8d0cfa26f151"
+    },
+    {
+      "frame": 6,
+      "bin": "frame_0006.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097102.jpg",
+      "n_bytes": 862,
+      "sha256": "07213dd700b7982457bb48fff2fcc1dc4d565ccf75e9b4d0cc1a521def4064da"
+    },
+    {
+      "frame": 7,
+      "bin": "frame_0007.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097103.jpg",
+      "n_bytes": 862,
+      "sha256": "da4780d54e5dc2793e4078c511cef67152ca849d226f5dabd63bdbbe3c5302bc"
+    },
+    {
+      "frame": 8,
+      "bin": "frame_0008.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097104.jpg",
+      "n_bytes": 862,
+      "sha256": "3d57a630d9a0411086ffaac3f654b275a17e5127d6dca8dd23a9033f199f5b01"
+    },
+    {
+      "frame": 9,
+      "bin": "frame_0009.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097105.jpg",
+      "n_bytes": 762,
+      "sha256": "b6e4a38ed7c3ad2a67f7b9f5152c3d00b6838f205464ea736d43198e61337525"
+    },
+    {
+      "frame": 10,
+      "bin": "frame_0010.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097106.jpg",
+      "n_bytes": 762,
+      "sha256": "95cf694f0fa916d80abf6e35914d9f6eb6321d4cb97d71ec9d7029b040002c97"
+    },
+    {
+      "frame": 11,
+      "bin": "frame_0011.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097107.jpg",
+      "n_bytes": 762,
+      "sha256": "c067bf5db98f783276b20f9a863a5cbbc2d6e903fd9dd0c6c27138fa13ec6905"
+    },
+    {
+      "frame": 12,
+      "bin": "frame_0012.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097108.jpg",
+      "n_bytes": 1642,
+      "sha256": "bd057afba30bc01ac8a1b079a0bff1d9016e42476d9ca2840385abee004d5ce5"
+    },
+    {
+      "frame": 13,
+      "bin": "frame_0013.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097109.jpg",
+      "n_bytes": 1354,
+      "sha256": "ace87e13f5fb376bc49c462f4d23ea74e39470de2805b159bb3127bf10c46e3e"
+    },
+    {
+      "frame": 14,
+      "bin": "frame_0014.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097110.jpg",
+      "n_bytes": 436,
+      "sha256": "02782d05d147290b5a763f27929b77f78c7899f90ed3b17318d12a7fc6322777"
+    },
+    {
+      "frame": 15,
+      "bin": "frame_0015.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097111.jpg",
+      "n_bytes": 436,
+      "sha256": "60354be183cf9fe0edf8b6ff306630c90b863e7958360d837d8d8f376e092c1a"
+    },
+    {
+      "frame": 16,
+      "bin": "frame_0016.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097112.jpg",
+      "n_bytes": 436,
+      "sha256": "5f64375374abed45212d7beffa8b2ae12857f83f43f07d8cb9ccf38c2ac71cb5"
+    },
+    {
+      "frame": 17,
+      "bin": "frame_0017.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097113.jpg",
+      "n_bytes": 562,
+      "sha256": "9b9879415996602da701f315a7ce71cdbdb2dd3b996e9d5acddf1b5a84df9b64"
+    },
+    {
+      "frame": 18,
+      "bin": "frame_0018.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097114.jpg",
+      "n_bytes": 704,
+      "sha256": "fd7ff9276c0ccafccce410febd09473e10d5ed18426ab5c92d0c1e8e278f28f9"
+    },
+    {
+      "frame": 19,
+      "bin": "frame_0019.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00097114.png",
+      "n_bytes": 704,
+      "sha256": "fd7ff9276c0ccafccce410febd09473e10d5ed18426ab5c92d0c1e8e278f28f9"
+    }
+  ],
+  "skipped": [],
+  "omnetpp_filePath": "scene_data/frame_0000.bin;scene_data/frame_0001.bin;scene_data/frame_0002.bin;scene_data/frame_0003.bin;scene_data/frame_0004.bin;scene_data/frame_0005.bin;scene_data/frame_0006.bin;scene_data/frame_0007.bin;scene_data/frame_0008.bin;scene_data/frame_0009.bin;scene_data/frame_0010.bin;scene_data/frame_0011.bin;scene_data/frame_0012.bin;scene_data/frame_0013.bin;scene_data/frame_0014.bin;scene_data/frame_0015.bin;scene_data/frame_0016.bin;scene_data/frame_0017.bin;scene_data/frame_0018.bin;scene_data/frame_0019.bin",
+  "staged_to": "/home/opp_env/default_workspace/veins/src/veins/modules/application/gbsed/GBSEDApp/scene_data"
+}

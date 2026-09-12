@@ -15,20 +15,47 @@
     {
       "frame": 1,
       "stem": "frame_0001",
-      "risky": false,
-      "matching_edges": []
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
     },
     {
       "frame": 2,
       "stem": "frame_0002",
-      "risky": false,
-      "matching_edges": []
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
     },
     {
       "frame": 3,
       "stem": "frame_0003",
-      "risky": false,
-      "matching_edges": []
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
     },
     {
       "frame": 4,
@@ -52,11 +79,11 @@
       "matching_edges": [
         {
           "relation": "super_near",
-          "other_actor": "car_1"
+          "other_actor": "car_0"
         },
         {
           "relation": "super_near",
-          "other_actor": "car_1"
+          "other_actor": "car_0"
         }
       ]
     },
@@ -116,7 +143,15 @@
         },
         {
           "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
           "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
         }
       ]
     },
@@ -131,7 +166,15 @@
         },
         {
           "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
           "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
         }
       ]
     },
@@ -146,7 +189,15 @@
         },
         {
           "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
           "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
         }
       ]
     },
@@ -258,51 +309,6 @@
     {
       "frame": 19,
       "stem": "frame_0019",
-      "risky": true,
-      "matching_edges": [
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        },
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        }
-      ]
-    },
-    {
-      "frame": 20,
-      "stem": "frame_0020",
-      "risky": true,
-      "matching_edges": [
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        },
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        }
-      ]
-    },
-    {
-      "frame": 21,
-      "stem": "frame_0021",
-      "risky": true,
-      "matching_edges": [
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        },
-        {
-          "relation": "near_coll",
-          "other_actor": "car_0"
-        }
-      ]
-    },
-    {
-      "frame": 22,
-      "stem": "frame_0022",
       "risky": true,
       "matching_edges": [
         {

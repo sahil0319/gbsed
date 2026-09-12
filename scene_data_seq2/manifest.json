@@ -1,0 +1,222 @@
+{
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/home/opp_env/default_workspace/gbsed/Config/pipeline_extraction.yaml",
+  "n_frames": 23,
+  "n_skipped": 12,
+  "total_bytes": 10028,
+  "frames": [
+    {
+      "frame": 0,
+      "bin": "frame_0000.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718200.jpg",
+      "n_bytes": 436,
+      "sha256": "68920a2df65d83a53e961b83dfbdfd45d3dcf1d147dde67ab3981dd30ec0f0c5"
+    },
+    {
+      "frame": 1,
+      "bin": "frame_0001.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718201.jpg",
+      "n_bytes": 436,
+      "sha256": "052b21b1647621fbee35ae6d618d2fda6335e17d232fbdbd2506ff85a5619dc3"
+    },
+    {
+      "frame": 2,
+      "bin": "frame_0002.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718205.jpg",
+      "n_bytes": 436,
+      "sha256": "8cd95a0738736e8415ed4cb60c7abe8201f60fbb1f5682012fc859b7d9c21786"
+    },
+    {
+      "frame": 3,
+      "bin": "frame_0003.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718214.jpg",
+      "n_bytes": 436,
+      "sha256": "db5a56a7b553df03248c8597da81bb9d4143befbbe5895538756f45d6782197b"
+    },
+    {
+      "frame": 4,
+      "bin": "frame_0004.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718215.jpg",
+      "n_bytes": 436,
+      "sha256": "219ab384f04ac6abee8d30a19ad7b19542c183891f55e2235b80cb0bb19400c5"
+    },
+    {
+      "frame": 5,
+      "bin": "frame_0005.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718216.jpg",
+      "n_bytes": 436,
+      "sha256": "528b8058aaa7a8f9a671020694e46e6d70ee8073649ad87a912232b3e7267212"
+    },
+    {
+      "frame": 6,
+      "bin": "frame_0006.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718217.jpg",
+      "n_bytes": 436,
+      "sha256": "bd6145837d73326a0f3a3728ff6a56cc12e0770ab75a45b697a8f6278e8cb824"
+    },
+    {
+      "frame": 7,
+      "bin": "frame_0007.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718218.jpg",
+      "n_bytes": 436,
+      "sha256": "5695a43b2c86b8b758c8b0874fa91f9709db24059fd02c92627e0b00c5d5d32a"
+    },
+    {
+      "frame": 8,
+      "bin": "frame_0008.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718219.jpg",
+      "n_bytes": 436,
+      "sha256": "d0bb468ae508a17210597a3c289675cadbf37c408f05c50daee8291c7a411887"
+    },
+    {
+      "frame": 9,
+      "bin": "frame_0009.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718220.jpg",
+      "n_bytes": 436,
+      "sha256": "3d98ea9271b1b2d7b500ff72ee1b9ca479969405b7f6e706dbf79ce4b90a009f"
+    },
+    {
+      "frame": 10,
+      "bin": "frame_0010.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718221.jpg",
+      "n_bytes": 436,
+      "sha256": "1174749ea2d9c906f49e6296a9a02feafa9176595103585e25e421c644f08104"
+    },
+    {
+      "frame": 11,
+      "bin": "frame_0011.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718222.jpg",
+      "n_bytes": 436,
+      "sha256": "6d506cd362414f2cd1b3843696cd6a0165511930d0c2de6f78d129855c81fd6c"
+    },
+    {
+      "frame": 12,
+      "bin": "frame_0012.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718223.jpg",
+      "n_bytes": 436,
+      "sha256": "b1dc457ab336866ea4521d95f783e97db0ff2eb37a8678b2b08c147678b63e75"
+    },
+    {
+      "frame": 13,
+      "bin": "frame_0013.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718224.jpg",
+      "n_bytes": 436,
+      "sha256": "2142dde8f641a851576721616a4eb5fbaf22bc9769c9b4c6ae74f40b3995c8c7"
+    },
+    {
+      "frame": 14,
+      "bin": "frame_0014.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718225.jpg",
+      "n_bytes": 436,
+      "sha256": "5a346fb44269bd0f4af0adacc38da5d43e3b7a9736c9704dbe00178f438f9514"
+    },
+    {
+      "frame": 15,
+      "bin": "frame_0015.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718226.jpg",
+      "n_bytes": 436,
+      "sha256": "0ffb7ce003423e1d1b1c3abd8b310bacba3ebb77cd0bf8ba0c2975d06948eba3"
+    },
+    {
+      "frame": 16,
+      "bin": "frame_0016.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718227.jpg",
+      "n_bytes": 436,
+      "sha256": "e63ebf0c9b04f58c4cd329a1d32f93bfad1970ca3fe42e539d84c0c08323ff5e"
+    },
+    {
+      "frame": 17,
+      "bin": "frame_0017.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718228.jpg",
+      "n_bytes": 436,
+      "sha256": "ec5e30516a2c3aab55cd081ca6f787b1869567eca99d24191db5c42064c9694c"
+    },
+    {
+      "frame": 18,
+      "bin": "frame_0018.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718229.jpg",
+      "n_bytes": 436,
+      "sha256": "0c3c99bb97c307a7b14e5c6502314b67ca6e168907a5c48eeda9fd6204bea776"
+    },
+    {
+      "frame": 19,
+      "bin": "frame_0019.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718230.jpg",
+      "n_bytes": 436,
+      "sha256": "ce017c1e5d9b1d873eedef73e28e97b01571359338bf357711f41e44331771fd"
+    },
+    {
+      "frame": 20,
+      "bin": "frame_0020.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718231.jpg",
+      "n_bytes": 436,
+      "sha256": "bb7889ee44d2c6b5424d2342e87dfcbf7017859aca9c3ea55fe8a8f5db84eb1c"
+    },
+    {
+      "frame": 21,
+      "bin": "frame_0021.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718234.jpg",
+      "n_bytes": 436,
+      "sha256": "b3a5ac21f875ebbe8bc4e8220c63a454eda543b4a257a1a7a4bb504c17968b9a"
+    },
+    {
+      "frame": 22,
+      "bin": "frame_0022.bin",
+      "source_image": "/home/opp_env/default_workspace/gbsed/images/00718235.jpg",
+      "n_bytes": 436,
+      "sha256": "37ccfa0e8f5c6a69385d93c3724e2206516977362477a55ef86d03fb6a13826c"
+    }
+  ],
+  "skipped": [
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718202.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718203.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718204.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718206.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718207.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718208.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718209.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718210.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718211.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718212.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718213.jpg",
+      "reason": "skeleton_only"
+    },
+    {
+      "image": "/home/opp_env/default_workspace/gbsed/images/00718233.jpg",
+      "reason": "skeleton_only"
+    }
+  ],
+  "omnetpp_filePath": "scene_data/frame_0000.bin;scene_data/frame_0001.bin;scene_data/frame_0002.bin;scene_data/frame_0003.bin;scene_data/frame_0004.bin;scene_data/frame_0005.bin;scene_data/frame_0006.bin;scene_data/frame_0007.bin;scene_data/frame_0008.bin;scene_data/frame_0009.bin;scene_data/frame_0010.bin;scene_data/frame_0011.bin;scene_data/frame_0012.bin;scene_data/frame_0013.bin;scene_data/frame_0014.bin;scene_data/frame_0015.bin;scene_data/frame_0016.bin;scene_data/frame_0017.bin;scene_data/frame_0018.bin;scene_data/frame_0019.bin;scene_data/frame_0020.bin;scene_data/frame_0021.bin;scene_data/frame_0022.bin",
+  "staged_to": "/home/opp_env/default_workspace/veins/src/veins/modules/application/gbsed/GBSEDApp/scene_data"
+}

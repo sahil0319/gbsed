@@ -1,0 +1,220 @@
+{
+  "frame": 2,
+  "stem": "frame_0002",
+  "bin": "frame_0002.bin",
+  "source_image": "/home/opp_env/default_workspace/gbsed/images/00097099.jpg",
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/home/opp_env/default_workspace/gbsed/Config/pipeline_extraction.yaml",
+  "n_bytes": 862,
+  "n_float16": 431,
+  "sha256": "2ecb40a0e2175a11ec2088d6edc8e5b56f3f88ae2b6fcf72d8beb71fea911ceb",
+  "labels": [
+    8,
+    0,
+    5,
+    5,
+    5,
+    1,
+    1
+  ],
+  "actor_names": [
+    "road",
+    "ego_car",
+    "lane",
+    "lane",
+    "lane",
+    "car",
+    "car"
+  ],
+  "active_relation_indexes": [
+    0,
+    1,
+    3,
+    5,
+    6,
+    8,
+    9
+  ],
+  "active_relation_names": [
+    "isIn",
+    "inDFrontOf",
+    "atDRearOf",
+    "toLeftOf",
+    "toRightOf",
+    "super_near",
+    "very_near"
+  ],
+  "T_shape": [
+    12,
+    7,
+    7
+  ],
+  "compT_shape": [
+    7,
+    7,
+    7
+  ],
+  "feature_shape": [
+    7,
+    10
+  ],
+  "compression_ratio": 0.5833,
+  "detections": [
+    {
+      "coco_id": 3,
+      "coco_name": "car",
+      "score": 0.998,
+      "box": [
+        794.5,
+        389.0,
+        1173.2,
+        552.0
+      ]
+    },
+    {
+      "coco_id": 3,
+      "coco_name": "car",
+      "score": 0.989,
+      "box": [
+        178.4,
+        390.6,
+        465.9,
+        531.9
+      ]
+    }
+  ],
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ],
+      [
+        "car_1",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inDFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Right Lane"
+      ],
+      [
+        "car_0",
+        "super_near",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "toRightOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "inDFrontOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "isIn",
+        "Left Lane"
+      ],
+      [
+        "car_1",
+        "toLeftOf",
+        "ego car"
+      ],
+      [
+        "car_1",
+        "very_near",
+        "ego car"
+      ],
+      [
+        "ego car",
+        "atDRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "atDRearOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "super_near",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "toLeftOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "toRightOf",
+        "car_1"
+      ],
+      [
+        "ego car",
+        "very_near",
+        "car_1"
+      ]
+    ],
+    "n_nodes": 7,
+    "n_edges": 18
+  },
+  "encode_seconds": 6.206
+}

@@ -1,0 +1,162 @@
+{
+  "frame": 20,
+  "stem": "frame_0020",
+  "bin": "frame_0020.bin",
+  "source_image": "/home/opp_env/default_workspace/gbsed/images/00718231.jpg",
+  "codebook": "0ad4f342b7dc5b27",
+  "config": "/home/opp_env/default_workspace/gbsed/Config/pipeline_extraction.yaml",
+  "n_bytes": 436,
+  "n_float16": 218,
+  "sha256": "bb7889ee44d2c6b5424d2342e87dfcbf7017859aca9c3ea55fe8a8f5db84eb1c",
+  "labels": [
+    8,
+    0,
+    5,
+    5,
+    5,
+    1
+  ],
+  "actor_names": [
+    "road",
+    "ego_car",
+    "lane",
+    "lane",
+    "lane",
+    "car"
+  ],
+  "active_relation_indexes": [
+    0,
+    2,
+    4,
+    7
+  ],
+  "active_relation_names": [
+    "isIn",
+    "inSFrontOf",
+    "atSRearOf",
+    "near_coll"
+  ],
+  "T_shape": [
+    12,
+    6,
+    6
+  ],
+  "compT_shape": [
+    4,
+    6,
+    6
+  ],
+  "feature_shape": [
+    6,
+    10
+  ],
+  "compression_ratio": 0.3333,
+  "detections": [
+    {
+      "coco_id": 3,
+      "coco_name": "car",
+      "score": 0.912,
+      "box": [
+        283.0,
+        428.6,
+        721.1,
+        711.8
+      ]
+    },
+    {
+      "coco_id": 1,
+      "coco_name": "person",
+      "score": 0.64,
+      "box": [
+        440.4,
+        458.1,
+        489.9,
+        488.9
+      ]
+    }
+  ],
+  "graph": {
+    "nodes": [
+      [
+        "Root Road",
+        "road",
+        8
+      ],
+      [
+        "ego car",
+        "ego_car",
+        0
+      ],
+      [
+        "Left Lane",
+        "lane",
+        5
+      ],
+      [
+        "Right Lane",
+        "lane",
+        5
+      ],
+      [
+        "Middle Lane",
+        "lane",
+        5
+      ],
+      [
+        "car_0",
+        "car",
+        1
+      ]
+    ],
+    "edges": [
+      [
+        "Left Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Middle Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "Right Lane",
+        "isIn",
+        "Root Road"
+      ],
+      [
+        "car_0",
+        "inSFrontOf",
+        "ego car"
+      ],
+      [
+        "car_0",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "car_0",
+        "near_coll",
+        "ego car"
+      ],
+      [
+        "ego car",
+        "atSRearOf",
+        "car_0"
+      ],
+      [
+        "ego car",
+        "isIn",
+        "Middle Lane"
+      ],
+      [
+        "ego car",
+        "near_coll",
+        "car_0"
+      ]
+    ],
+    "n_nodes": 6,
+    "n_edges": 9
+  },
+  "encode_seconds": 5.401
+}

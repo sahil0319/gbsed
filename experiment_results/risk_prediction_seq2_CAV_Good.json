@@ -1,0 +1,18 @@
+{
+  "n_frames_used": 16,
+  "n_frames_skipped": 7,
+  "skipped_frames": [
+    "frame_0016",
+    "frame_0017",
+    "frame_0018",
+    "frame_0019",
+    "frame_0020",
+    "frame_0021",
+    "frame_0022"
+  ],
+  "prediction": 1,
+  "class_probabilities": [
+    0.02384709194302559,
+    0.9761528968811035
+  ]
+}
