@@ -1,0 +1,326 @@
+{
+  "risky_relations_used": [
+    "near_coll",
+    "super_near"
+  ],
+  "sequence_label": 1,
+  "sequence_label_meaning": "1=risky, 0=not risky",
+  "per_frame": [
+    {
+      "frame": 0,
+      "stem": "frame_0000",
+      "risky": false,
+      "matching_edges": []
+    },
+    {
+      "frame": 1,
+      "stem": "frame_0001",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 2,
+      "stem": "frame_0002",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 3,
+      "stem": "frame_0003",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 4,
+      "stem": "frame_0004",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 5,
+      "stem": "frame_0005",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 6,
+      "stem": "frame_0006",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 7,
+      "stem": "frame_0007",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 8,
+      "stem": "frame_0008",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 9,
+      "stem": "frame_0009",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        }
+      ]
+    },
+    {
+      "frame": 10,
+      "stem": "frame_0010",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        }
+      ]
+    },
+    {
+      "frame": 11,
+      "stem": "frame_0011",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_1"
+        }
+      ]
+    },
+    {
+      "frame": 12,
+      "stem": "frame_0012",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "super_near",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 13,
+      "stem": "frame_0013",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 14,
+      "stem": "frame_0014",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 15,
+      "stem": "frame_0015",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 16,
+      "stem": "frame_0016",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 17,
+      "stem": "frame_0017",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 18,
+      "stem": "frame_0018",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    },
+    {
+      "frame": 19,
+      "stem": "frame_0019",
+      "risky": true,
+      "matching_edges": [
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        },
+        {
+          "relation": "near_coll",
+          "other_actor": "car_0"
+        }
+      ]
+    }
+  ],
+  "note": "Heuristic proxy ground truth derived from geometric proximity relations, not human-annotated. See script docstring."
+}
