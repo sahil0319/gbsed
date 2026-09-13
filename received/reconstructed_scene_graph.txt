@@ -1,0 +1,43 @@
+================================================================================
+GBSED RECONSTRUCTED SCENE GRAPH REPORT
+Source Binary Payload: c:\Users\ACER\Desktop\thesis\gbsed project\gbsed\received\received_scene_0000.bin (862 bytes)
+================================================================================
+
+1. RECONSTRUCTED NODES (7 total):
+--------------------------------------------------------------------------------
+  [Node 0] Name: 'Root Road' | Type: 'road' (Index: 8)
+             Attributes: {'name': 'Root Road'}
+  [Node 1] Name: 'ego car' | Type: 'ego_car' (Index: 0)
+             Attributes: {'location_x': 343.5, 'location_y': 589.0}
+  [Node 2] Name: 'Left Lane' | Type: 'lane' (Index: 5)
+  [Node 3] Name: 'Right Lane' | Type: 'lane' (Index: 5)
+  [Node 4] Name: 'Middle Lane' | Type: 'lane' (Index: 5)
+  [Node 5] Name: 'car_0' | Type: 'car' (Index: 1)
+             Attributes: {'left': 788.0, 'top': 389.5, 'right': 1186.0, 'bottom': 563.0, 'location_x': 349.25, 'location_y': 586.5, 'rel_location_x': 5.9609375, 'rel_location_y': -2.654296875, 'distance_abs': 6.5234375}
+  [Node 6] Name: 'car_1' | Type: 'car' (Index: 1)
+             Attributes: {'left': 131.875, 'top': 394.0, 'right': 447.25, 'bottom': 540.0, 'location_x': 336.75, 'location_y': 586.0, 'rel_location_x': -6.62109375, 'rel_location_y': -3.341796875, 'distance_abs': 7.4140625}
+
+2. RECONSTRUCTED DIRECTED RELATIONS (16 total edges):
+--------------------------------------------------------------------------------
+  (ego car) ---[isIn]---> (Middle Lane)
+  (Left Lane) ---[isIn]---> (Root Road)
+  (Right Lane) ---[isIn]---> (Root Road)
+  (Middle Lane) ---[isIn]---> (Root Road)
+  (car_0) ---[isIn]---> (Middle Lane)
+  (car_1) ---[isIn]---> (Left Lane)
+  (car_0) ---[inDFrontOf]---> (ego car)
+  (car_1) ---[inDFrontOf]---> (ego car)
+  (ego car) ---[atDRearOf]---> (car_0)
+  (ego car) ---[atDRearOf]---> (car_1)
+  (car_1) ---[toLeftOf]---> (ego car)
+  (ego car) ---[toRightOf]---> (car_1)
+  (ego car) ---[super_near]---> (car_0)
+  (car_0) ---[super_near]---> (ego car)
+  (ego car) ---[very_near]---> (car_1)
+  (car_1) ---[very_near]---> (ego car)
+
+3. ACTIVE RELATION TYPES:
+--------------------------------------------------------------------------------
+  ['isIn', 'inDFrontOf', 'atDRearOf', 'toLeftOf', 'toRightOf', 'super_near', 'very_near']
+
+================================================================================

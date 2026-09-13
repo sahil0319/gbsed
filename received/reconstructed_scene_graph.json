@@ -1,0 +1,255 @@
+{
+  "source_file": "c:\\Users\\ACER\\Desktop\\thesis\\gbsed project\\gbsed\\received\\received_scene_0000.bin",
+  "payload_bytes": 862,
+  "num_nodes": 7,
+  "num_relations": 16,
+  "active_relation_types": [
+    "isIn",
+    "inDFrontOf",
+    "atDRearOf",
+    "toLeftOf",
+    "toRightOf",
+    "super_near",
+    "very_near"
+  ],
+  "nodes": [
+    {
+      "id": 0,
+      "name": "Root Road",
+      "label": "road",
+      "label_idx": 8,
+      "attributes": {
+        "name": "Root Road"
+      }
+    },
+    {
+      "id": 1,
+      "name": "ego car",
+      "label": "ego_car",
+      "label_idx": 0,
+      "attributes": {
+        "location_x": 343.5,
+        "location_y": 589.0
+      }
+    },
+    {
+      "id": 2,
+      "name": "Left Lane",
+      "label": "lane",
+      "label_idx": 5,
+      "attributes": {}
+    },
+    {
+      "id": 3,
+      "name": "Right Lane",
+      "label": "lane",
+      "label_idx": 5,
+      "attributes": {}
+    },
+    {
+      "id": 4,
+      "name": "Middle Lane",
+      "label": "lane",
+      "label_idx": 5,
+      "attributes": {}
+    },
+    {
+      "id": 5,
+      "name": "car_0",
+      "label": "car",
+      "label_idx": 1,
+      "attributes": {
+        "left": 788.0,
+        "top": 389.5,
+        "right": 1186.0,
+        "bottom": 563.0,
+        "location_x": 349.25,
+        "location_y": 586.5,
+        "rel_location_x": 5.9609375,
+        "rel_location_y": -2.654296875,
+        "distance_abs": 6.5234375
+      }
+    },
+    {
+      "id": 6,
+      "name": "car_1",
+      "label": "car",
+      "label_idx": 1,
+      "attributes": {
+        "left": 131.875,
+        "top": 394.0,
+        "right": 447.25,
+        "bottom": 540.0,
+        "location_x": 336.75,
+        "location_y": 586.0,
+        "rel_location_x": -6.62109375,
+        "rel_location_y": -3.341796875,
+        "distance_abs": 7.4140625
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Middle Lane",
+      "target_id": 4
+    },
+    {
+      "source": "Left Lane",
+      "source_id": 2,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Root Road",
+      "target_id": 0
+    },
+    {
+      "source": "Right Lane",
+      "source_id": 3,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Root Road",
+      "target_id": 0
+    },
+    {
+      "source": "Middle Lane",
+      "source_id": 4,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Root Road",
+      "target_id": 0
+    },
+    {
+      "source": "car_0",
+      "source_id": 5,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Middle Lane",
+      "target_id": 4
+    },
+    {
+      "source": "car_1",
+      "source_id": 6,
+      "relation": "isIn",
+      "relation_idx": 0,
+      "target": "Left Lane",
+      "target_id": 2
+    },
+    {
+      "source": "car_0",
+      "source_id": 5,
+      "relation": "inDFrontOf",
+      "relation_idx": 1,
+      "target": "ego car",
+      "target_id": 1
+    },
+    {
+      "source": "car_1",
+      "source_id": 6,
+      "relation": "inDFrontOf",
+      "relation_idx": 1,
+      "target": "ego car",
+      "target_id": 1
+    },
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "atDRearOf",
+      "relation_idx": 3,
+      "target": "car_0",
+      "target_id": 5
+    },
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "atDRearOf",
+      "relation_idx": 3,
+      "target": "car_1",
+      "target_id": 6
+    },
+    {
+      "source": "car_1",
+      "source_id": 6,
+      "relation": "toLeftOf",
+      "relation_idx": 5,
+      "target": "ego car",
+      "target_id": 1
+    },
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "toRightOf",
+      "relation_idx": 6,
+      "target": "car_1",
+      "target_id": 6
+    },
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "super_near",
+      "relation_idx": 8,
+      "target": "car_0",
+      "target_id": 5
+    },
+    {
+      "source": "car_0",
+      "source_id": 5,
+      "relation": "super_near",
+      "relation_idx": 8,
+      "target": "ego car",
+      "target_id": 1
+    },
+    {
+      "source": "ego car",
+      "source_id": 1,
+      "relation": "very_near",
+      "relation_idx": 9,
+      "target": "car_1",
+      "target_id": 6
+    },
+    {
+      "source": "car_1",
+      "source_id": 6,
+      "relation": "very_near",
+      "relation_idx": 9,
+      "target": "ego car",
+      "target_id": 1
+    }
+  ],
+  "raw_tensors": {
+    "labels": [
+      8,
+      0,
+      5,
+      5,
+      5,
+      1,
+      1
+    ],
+    "L": [
+      0,
+      1,
+      3,
+      5,
+      6,
+      8,
+      9
+    ],
+    "feature_matrix_shape": [
+      7,
+      10
+    ],
+    "compressed_tensor_shape": [
+      7,
+      7,
+      7
+    ],
+    "full_tensor_shape": [
+      12,
+      7,
+      7
+    ]
+  }
+}
