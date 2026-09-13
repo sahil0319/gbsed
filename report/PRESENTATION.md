@@ -176,6 +176,13 @@ safety-first.
 | Safety recall, Noise_Medium | 0.50 | **1.00** |
 | Extra chunks on the wire | — | **0** |
 
+**Figure:** `partial_delivery.png` — one frame, one lost chunk, both layouts
+
+> *Say:* "Same frame, same chunk lost. Both reconstructions have **exactly ten
+> edges** and an **identical** actor-F1 of 0.667 — but v2 keeps both safety
+> relations and v1 keeps neither. An aggregate structural metric cannot tell
+> these two apart. That is why we report safety-relation recall separately."
+
 ---
 
 ## Slide 7 — Challenges, Limitations & Future Work

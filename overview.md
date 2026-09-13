@@ -313,6 +313,7 @@ classifier simply seeing fewer frames.
 | `experiment_results_format/01_format_sweep.png` | v1 vs v2 under partial loss | the 1000 B pair *coinciding* is expected, not a null result — at that size only 2 of 20 frames span multiple chunks |
 | `report/figures/architecture.png` | the full pipeline | green = transmitter, blue = our network work, red = receiver |
 | `report/figures/scenario.png` | SUMO geometry + measured delivery vs distance | separation grows at 10.35 m/s; last chunk heard at 488 m |
+| `report/figures/partial_delivery.png` | one frame, one lost chunk, both payload layouts | (b) and (c) have the **same** edge count and actor-F1 — but only v2 keeps the safety relations |
 | `scene_data_seq1/png/` vs `decoded_seq1/png/` | per-frame graphs, sent vs received | identical for every delivered frame |
 
 ### Superseded — regenerate before using

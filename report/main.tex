@@ -797,22 +797,52 @@ $1.00$ (v2) at Noise\_Low and Noise\_Medium respectively --- with identical
 bytes, identical delivery, and zero additional chunks on the wire at
 $1000$\,B, one additional at $500$\,B.
 
-A single frame illustrates the mechanism. It received 1 of its 2 chunks under
-both formats:
+A single frame illustrates the mechanism, and is worth examining closely.
+Frame~0005 of \texttt{seq1} occupies $1000$ bytes in two $500$-byte chunks.
+Chunk~0 was heard at $359$\,m; chunk~1 never arrived. The same chunk was lost
+under both payload layouts. Figure~\ref{fig:partial} shows the three graphs.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/partial_delivery.png}
+    \caption{Partial delivery of a single frame under the two payload layouts.
+    (a)~the transmitted graph; (b)~reconstructed from format v2 with one chunk
+    lost; (c)~reconstructed from format v1 with the same chunk lost. Both
+    reconstructions contain exactly ten edges and score an identical actor-edge
+    F1, yet only (b) retains the safety-critical relations.}
+    \label{fig:partial}
+\end{figure}
+
+Under v2, block~0 carries the node block together with \texttt{super\_near},
+\texttt{isIn} and \texttt{very\_near}; the lost block~1 carried the four
+directional relations. The receiver therefore recovers the lane structure and
+every safety relation, and loses only directional context.
+
+Under v1 the payload is one flat vector. The truncated region is zero-filled,
+which silently empties the adjacency matrices that happened to fall there ---
+including \texttt{super\_near}. The reconstruction retains
+\texttt{inDFrontOf} and \texttt{atDRearOf} instead, which are of no use to a
+braking decision.
 
 \begin{center}
-\begin{tabular}{l l l}
+\begin{tabular}{l c c l}
 \toprule
- & \textbf{Safety relations} & \textbf{Reported as} \\
+ & \textbf{Edges} & \textbf{Safety relations} & \textbf{Reported as} \\
 \midrule
-v1 & $0/2$ & ``payload differs from sent bytes'' \\
-v2 & $\mathbf{2/2}$ & ``partial: 1 block lost, 3/7 relations recovered'' \\
+v1 & 10 & $0/2$ & ``payload differs from sent bytes'' \\
+v2 & 10 & $\mathbf{2/2}$ & ``partial: 1 block lost, 3/7 relations recovered'' \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Same bytes on the air, same chunk lost. v1 loses both safety relations; v2
-keeps both \emph{and reports precisely what is missing}.
+Two observations follow. First, v1 not only loses the safety relations but
+cannot tell that it has: the zero-filled payload parses without complaint, and
+only a comparison against the sender's hash reveals the damage. Second --- and
+more important for evaluation design --- \textbf{both reconstructions have the
+same edge count and the same actor-edge F1 of $0.667$}. An aggregate structural
+metric cannot distinguish a reconstruction that preserves the braking-relevant
+content from one that discards it. This is precisely why safety-relation recall
+is reported as a separate metric in this work.
 
 \section{Corrected Evaluation Defects}
 

@@ -48,6 +48,7 @@ The first author entry is pre-filled as `Md. Sahil Mahdi / 220041149` —
 | `rate_semantics.png` | Ch.6 | the 96× result |
 | `payload_size.png` | Ch.6 | payload sizes, log scale |
 | `format_sweep.png` | Ch.6 | v1 vs v2 under partial delivery |
+| `partial_delivery.png` | Ch.6 | one frame with one chunk lost, reconstructed under both payload formats |
 | `superseded_metrics.png` | Ch.6 | the original figure, kept as evidence of two defects |
 
 All are regenerable — see `../overview.md` §5.
