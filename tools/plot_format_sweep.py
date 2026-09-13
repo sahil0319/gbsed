@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot the v1-vs-v2 format sweep: does slice-aligned packing preserve the
+"""Plot the payload-layout sweep: does slice-aligned packing preserve the
 relations that matter when a frame only partly arrives?"""
 import csv, argparse
 from pathlib import Path
@@ -28,10 +28,10 @@ xs = np.arange(len(CONFIGS))
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 style = {
-    "v1_cs1000": ("#9ecae1", "v1 flat, 1000 B chunks", "--", "s"),
-    "v2_cs1000": ("#31a354", "v2 sliced, 1000 B chunks", "--", "^"),
-    "v1_cs500":  ("#d6604d", "v1 flat, 500 B chunks", "-", "s"),
-    "v2_cs500":  ("#1b7837", "v2 sliced, 500 B chunks", "-", "o"),
+    "v1_cs1000": ("#9ecae1", "flat serialisation, 1000 B chunks", "--", "s"),
+    "v2_cs1000": ("#31a354", "slice-aligned, 1000 B chunks", "--", "^"),
+    "v1_cs500":  ("#d6604d", "flat serialisation, 500 B chunks", "-", "s"),
+    "v2_cs500":  ("#1b7837", "slice-aligned, 500 B chunks", "-", "o"),
 }
 
 for ax, key, title, ylab in [
@@ -64,6 +64,6 @@ for c in CONFIGS:
     a1 = next((r for r in rows if r["arm"] == "v1_cs500" and r["config"] == c), None)
     a2 = next((r for r in rows if r["arm"] == "v2_cs500" and r["config"] == c), None)
     if a1 and a2 and a1["risky_total"] != "0":
-        print("  %-13s delivered %s both;  safety v1 %s/%s -> v2 %s/%s"
+        print("  %-13s delivered %s both;  safety flat %s/%s -> slice-aligned %s/%s"
               % (c, a1["delivered"], a1["risky_preserved"], a1["risky_total"],
                  a2["risky_preserved"], a2["risky_total"]))

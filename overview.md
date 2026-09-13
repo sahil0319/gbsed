@@ -145,17 +145,19 @@ Three ways to send images instead of graphs:
 - **Budget sweep** — the budget multiplied by 1, 2, 4 … 128 with the channel
   removed, producing a rate-versus-meaning curve.
 
-### Phase 6 — Graceful degradation (format v2)
+### Phase 6 — Graceful degradation (slice-aligned packing)
 
 We noticed the decoder *already* tolerated a partial relation set — semantic
 decompression writes each delivered slice into its slot and leaves the rest
 zero. Only the byte layout threw that away: one flat vector, so losing any chunk
 destroyed the frame.
 
-Format **v2** packs whole relation slices into self-describing blocks the same
-size as a network chunk, safety relations first. A lost block now costs a
-relation *type*, not the frame. The receiver also had to be changed to hand over
-incomplete files, which it previously discarded.
+The **slice-aligned layout** packs whole relation slices into self-describing
+blocks the same size as a network chunk, safety relations first. A lost block
+now costs a relation *type*, not the frame. The receiver also had to be changed
+to hand over incomplete files, which it previously discarded. (In the encoder
+CLI this layout is selected with `--format v2`; the original flat layout is
+`--format v1`.)
 
 ---
 
@@ -225,7 +227,7 @@ Measured, not extrapolated: **1.24% of the first frame arrived.**
 
 At 500-byte chunks, same bytes and same delivery:
 
-| condition | v1 safety recall | **v2 safety recall** |
+| condition | flat layout | **slice-aligned** |
 |---|---|---|
 | Noise_Low | 0.80 | **1.00** |
 | Noise_Medium | 0.50 | **1.00** |
@@ -235,11 +237,11 @@ Cost: **zero extra chunks** on the air at 1000 B, one extra at 500 B.
 One frame shows the mechanism. It got 1 of its 2 chunks under both formats:
 
 ```
-v1   safety 0/2   "payload differs from sent bytes"
-v2   safety 2/2   "partial: 1 block lost, 3/7 relations recovered"
+flat layout     safety 0/2   "payload differs from sent bytes"
+slice-aligned   safety 2/2   "partial: 1 block lost, 3/7 relations recovered"
 ```
 
-Same chunk lost. v1 loses both safety relations; v2 keeps both **and says what
+Same chunk lost. The flat layout loses both safety relations; the slice-aligned layout keeps both **and says what
 is missing**.
 
 ---
@@ -310,10 +312,10 @@ classifier simply seeing fewer frames.
 | `budget_sweep/01_rate_semantics.png` | **the headline.** Bytes/frame (log) vs meaning recovered | GBSED is the green star at 811 B; the image curves need ~10⁵ bytes to reach it. The dotted line is the validity control. |
 | `comparison/01_gbsed_vs_image.png` | fixed budget over the real channel | the three *overlapping* lines in the left panel **are the point** — the control held. The other two panels diverge completely. |
 | `comparison/02_payload_size.png` | payload sizes, log scale | the 1531× gap |
-| `experiment_results_format/01_format_sweep.png` | v1 vs v2 under partial loss | the 1000 B pair *coinciding* is expected, not a null result — at that size only 2 of 20 frames span multiple chunks |
+| `experiment_results_format/01_format_sweep.png` | flat vs slice-aligned packing under partial loss | the 1000 B pair *coinciding* is expected, not a null result — at that size only 2 of 20 frames span multiple chunks |
 | `report/figures/architecture.png` | the full pipeline | green = transmitter, blue = our network work, red = receiver |
 | `report/figures/scenario.png` | SUMO geometry + measured delivery vs distance | separation grows at 10.35 m/s; last chunk heard at 488 m |
-| `report/figures/partial_delivery.png` | one frame, one lost chunk, both payload layouts | (b) and (c) have the **same** edge count and actor-F1 — but only v2 keeps the safety relations |
+| `report/slides_figures/loss_resilience.png` | one frame, one lost chunk | the collision-risk relation survives in the reconstructed graph; a flat layout would have lost it at the same edge count |
 | `scene_data_seq1/png/` vs `decoded_seq1/png/` | per-frame graphs, sent vs received | identical for every delivered frame |
 
 ### Superseded — regenerate before using
@@ -339,14 +341,14 @@ so all carry the duplicate artefact.
 |---|---|
 | `budget_sweep/budget_sweep.csv` | the rate–meaning curve |
 | `comparison/comparison.csv` | matched budget over the channel |
-| `experiment_results_format/format_results.csv` | v1 vs v2 |
+| `experiment_results_format/format_results.csv` | flat vs slice-aligned |
 | `experiment_results/results_matrix.csv` | the GBSED channel sweep |
 | `experiment_results_image/image_results_matrix.csv` | the pixel arms |
 | `*/decoded_*/fidelity.csv` | per-frame detail for every run |
 | `*/received_*/{tx,rx}_log.csv` | per-chunk logs with distance |
 
 Useful per-frame columns: `status` (EXACT / DEGRADED / CORRUPT / LOST),
-`actor_edge_f1`, `risky_preserved`/`risky_orig`, `distance_m`, and for v2
+`actor_edge_f1`, `risky_preserved`/`risky_orig`, `distance_m`, and for the slice-aligned layout
 `blocks_missing` / `relations_recovered`.
 
 ---
@@ -435,10 +437,12 @@ puts the two side by side; on the development machine they are at
    the single biggest limitation of the task-level results.
 2. **`result_graphs/` needs regenerating** against the deduplicated configs and
    corrected metrics.
-3. **v2 is not the default** — v1 still is, to stay byte-identical to the
-   published implementation. Note that with partial-file writing enabled, a
-   truncated *v1* payload parses into a silently wrong graph; prefer v2 there.
-4. **The v2 benefit needs small chunks or denser scenes** to show at 1000 B.
+3. **The slice-aligned layout is not the default** — the flat serialisation
+   still is, to stay byte-identical to the published implementation. With
+   partial-file writing enabled a truncated flat payload parses into a silently
+   wrong graph, so the slice-aligned layout should be preferred there.
+   (CLI: `--format v1` flat, `--format v2` slice-aligned.)
+4. **The slice-aligned benefit needs small chunks or denser scenes** to show at 1000 B.
 5. **Payloads reproduce as graphs, not bytes.** Re-encoding on another platform
    gave 17/20 byte-identical payloads, the rest differing by one unit in the
    last place of a single float16 feature. All 20 graphs were identical.

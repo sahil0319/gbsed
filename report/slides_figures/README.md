@@ -105,43 +105,12 @@ Suggested widths: `network_delivery` `0.78`, `matched_budget` `0.92`,
 
 ---
 
-## Slide wording to update (remove the internal version numbers)
+## Ready-to-use presentation source
 
-Three slides in the current deck still name the payload formats "v1" and "v2".
-Replacement text that keeps the result and drops the version numbers:
-
-**Slide "Results: Graceful Semantic Degradation"** — replace the whole body
-with the figure and one line:
-
-```latex
-\begin{frame}{Results: Graceful Semantic Degradation}
-\centering
-\includegraphics[width=0.95\textwidth]{figures/loss_resilience.png}
-\end{frame}
-```
-
-If you prefer to keep a text summary instead of the figure, use:
-
-> The payload packs whole relation slices into independent chunks, with
-> collision-risk relations placed first. When a chunk is lost, only a relation
-> *type* is dropped — not the whole frame. In the measured case a frame lost one
-> of its two chunks yet preserved both collision-risk relations (2/2), losing
-> only directional context.
-
-**Slide "Limitations"** — remove the bullet that begins *"Format v2 was not used
-as the default because v1 was kept for compatibility…"* and replace with:
-
-> The slice-aligned payload benefits most when frames span several chunks; with
-> larger chunks or sparser scenes a single chunk already carries the whole
-> frame, so there is nothing to lose partially.
-
-**Slide "Conclusion"** — change the last bullet from *"Format v2 allows semantic
-information to degrade by relation content…"* to:
-
-> The payload is packed so that semantic information degrades **by relation
-> content** — a lost packet costs a relation type, not the whole frame.
-
----
+`presentation_main.tex` in this folder is your deck with the results slides
+already switched to these figures and the payload-format version numbers
+removed. Upload it as your `main.tex` (or copy the changed frames), and put the
+five `.png` files in a `figures/` folder alongside it.
 
 ## Provenance summary
 

@@ -429,8 +429,8 @@ this discards between $4$ and $8$ of the $12$ slices.
 \subsection{Layer 3: Serialisation}
 
 The arrays are flattened into a single \texttt{float16} vector, each section
-preceded by its length, and written as bytes. We refer to this as format
-\textbf{v1}; it is byte-for-byte identical to the published implementation.
+preceded by its length, and written as bytes. This flat serialisation is
+byte-for-byte identical to the published implementation.
 
 \subsection{Layer 4: Transport}
 
@@ -560,24 +560,26 @@ tools wrap it: an encoder that turns a folder of images into payloads plus
 ground-truth metadata, and a decoder that rebuilds graphs from received bytes
 and scores them.
 
-\section{The Slice-Aligned Payload Format (v2)}
+\section{Slice-Aligned Payload Packing}
 
 Semantic decompression already tolerates a partial relation set: it writes each
 delivered slice to its index in $T$ and leaves the remainder zero, and cannot
 distinguish ``this relation was absent from the scene'' from ``this relation's
-slice did not arrive''. The capability existed; only the packing discarded it.
+slice did not arrive''. The capability existed; the flat serialisation of
+Layer~3 discarded it, because a single vector cut into fixed-size chunks cannot
+be parsed once a chunk is missing.
 
-Format v2 builds the payload as a whole number of blocks of exactly
-\texttt{chunkSize} bytes. Each block begins with a magic number and carries
-only \emph{complete} relation slices; block~0 additionally carries the node
-block. Because the transport chunks naively at the same size, every network
-chunk is one self-contained block. A missing block is all zeros, fails the
-magic check and is skipped.
+The slice-aligned layout builds the payload as a whole number of blocks of
+exactly \texttt{chunkSize} bytes. Each block begins with a magic number and
+carries only \emph{complete} relation slices; the first block additionally
+carries the node block. Because the transport chunks naively at the same size,
+every network chunk is one self-contained block. A missing block is all zeros,
+fails the magic check and is skipped.
 
 Slices are ordered safety-first. An earlier ordering that led with the
-structural \texttt{isIn} relation pushed \texttt{near\_coll} into block~1 at
-small chunk sizes, where losing one chunk cost every safety relation --- the
-exact failure the format exists to prevent.
+structural \texttt{isIn} relation pushed \texttt{near\_coll} into the second
+block at small chunk sizes, where losing one chunk cost every safety relation
+--- the exact failure the layout exists to prevent.
 
 The decoder's core required no modification: \texttt{decode()} is simply called
 with whatever index list survived.
@@ -585,9 +587,10 @@ with whatever index list survived.
 \section{Verification}
 
 \begin{itemize}
-    \item Format v1 remains the default and still round-trips byte-identically
-    through the published serialiser for all 20 frames.
-    \item Format v2 produces identical scene graphs to v1 (0 of 20 differ).
+    \item The flat serialisation remains the default and still round-trips
+    byte-identically through the published serialiser for all 20 frames.
+    \item The slice-aligned layout produces identical scene graphs to the flat
+    serialisation (0 of 20 differ).
     \item A drop-one-block test over every block confirms that losing block~0
     yields a clean diagnostic error while losing any other block recovers
     $5/7$ relations with safety relations intact.
@@ -782,67 +785,64 @@ visible.
 
 \section{Graceful Degradation via Slice-Aligned Packing}
 
+Because semantic decompression tolerates a partial relation set, a
+reconstruction can succeed from only some of a frame's chunks --- but only if
+the payload is packed to allow it. The flat serialisation cannot: a single
+lost chunk leaves the concatenated vector unparseable, so the whole frame is
+lost. The slice-aligned layout packs whole relation slices into independent,
+self-describing blocks, ordered safety-first, so a lost chunk removes a
+relation type rather than the frame.
+
+At $500$-byte chunks, where frames genuinely span several chunks, this changes
+the outcome. With identical bytes, identical delivery, and no additional chunks
+on the wire at $1000$\,B (one additional at $500$\,B), safety-relation recall
+under partial delivery improves as shown in Table~\ref{tab:graceful}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{l c c}
+\toprule
+\textbf{Channel condition} & \textbf{Flat serialisation} & \textbf{Slice-aligned packing} \\
+\midrule
+Noise\_Low    & $0.80$ & $\mathbf{1.00}$ \\
+Noise\_Medium & $0.50$ & $\mathbf{1.00}$ \\
+\bottomrule
+\end{tabular}
+\caption{Safety-relation recall under partial delivery at a 500-byte chunk
+size. Same bytes, same channel, same delivered frames.}
+\label{tab:graceful}
+\end{table}
+
+A single frame illustrates the mechanism (Figure~\ref{fig:partial}). Frame~0005
+of \texttt{seq1} occupies $1000$ bytes in two $500$-byte chunks; chunk~0 was
+heard at $359$\,m and chunk~1 never arrived. With the slice-aligned layout the
+delivered chunk carries the node block together with \texttt{super\_near},
+\texttt{isIn} and \texttt{very\_near}, while the lost chunk carried the four
+directional relations. The receiver therefore recovers the lane structure and
+every safety-critical relation, losing only directional context.
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{figures/format_sweep.png}
-    \caption{Format v1 against v2. The 1000\,B pair coincide because only 2 of
-    20 frames span more than one chunk at that size. The 500\,B pair separate:
-    v1 falls to $0.80$ then $0.50$; v2 holds $1.00$.}
-    \label{fig:format}
-\end{figure}
-
-At $500$-byte chunks, where frames genuinely span blocks, safety-relation
-recall under partial delivery rises from $0.80$ and $0.50$ (v1) to $1.00$ and
-$1.00$ (v2) at Noise\_Low and Noise\_Medium respectively --- with identical
-bytes, identical delivery, and zero additional chunks on the wire at
-$1000$\,B, one additional at $500$\,B.
-
-A single frame illustrates the mechanism, and is worth examining closely.
-Frame~0005 of \texttt{seq1} occupies $1000$ bytes in two $500$-byte chunks.
-Chunk~0 was heard at $359$\,m; chunk~1 never arrived. The same chunk was lost
-under both payload layouts. Figure~\ref{fig:partial} shows the three graphs.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{figures/partial_delivery.png}
-    \caption{Partial delivery of a single frame under the two payload layouts.
-    (a)~the transmitted graph; (b)~reconstructed from format v2 with one chunk
-    lost; (c)~reconstructed from format v1 with the same chunk lost. Both
-    reconstructions contain exactly ten edges and score an identical actor-edge
-    F1, yet only (b) retains the safety-critical relations.}
+    \includegraphics[width=\textwidth]{figures/loss_resilience.png}
+    \caption{Partial delivery of a single frame. Left: the transmitted graph.
+    Right: the graph reconstructed after one of the two chunks was lost. The
+    collision-risk relation \texttt{super\_near} rides in the delivered chunk
+    and survives intact; only directional context is lost.}
     \label{fig:partial}
 \end{figure}
 
-Under v2, block~0 carries the node block together with \texttt{super\_near},
-\texttt{isIn} and \texttt{very\_near}; the lost block~1 carried the four
-directional relations. The receiver therefore recovers the lane structure and
-every safety relation, and loses only directional context.
-
-Under v1 the payload is one flat vector. The truncated region is zero-filled,
-which silently empties the adjacency matrices that happened to fall there ---
-including \texttt{super\_near}. The reconstruction retains
-\texttt{inDFrontOf} and \texttt{atDRearOf} instead, which are of no use to a
-braking decision.
-
-\begin{center}
-\begin{tabular}{l c c l}
-\toprule
- & \textbf{Edges} & \textbf{Safety relations} & \textbf{Reported as} \\
-\midrule
-v1 & 10 & $0/2$ & ``payload differs from sent bytes'' \\
-v2 & 10 & $\mathbf{2/2}$ & ``partial: 1 block lost, 3/7 relations recovered'' \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Two observations follow. First, v1 not only loses the safety relations but
-cannot tell that it has: the zero-filled payload parses without complaint, and
-only a comparison against the sender's hash reveals the damage. Second --- and
-more important for evaluation design --- \textbf{both reconstructions have the
-same edge count and the same actor-edge F1 of $0.667$}. An aggregate structural
-metric cannot distinguish a reconstruction that preserves the braking-relevant
-content from one that discards it. This is precisely why safety-relation recall
-is reported as a separate metric in this work.
+Had the same chunk been lost under the flat serialisation, the truncated
+payload would have been zero-filled, silently emptying whichever adjacency
+matrices fell in the lost region --- here \texttt{super\_near} itself --- and
+leaving only directional relations of no use to a braking decision. That
+reconstruction would still contain exactly ten edges and score an identical
+actor-edge F1 of $0.667$, yet preserve none of the safety-critical content.
+\textbf{No aggregate structural metric distinguishes the two outcomes}, which
+is precisely why safety-relation recall is reported as a separate metric in
+this work. A second point follows: the flat serialisation not only loses the
+safety relations but cannot detect that it has, since the zero-filled payload
+parses without complaint and only a comparison against the sender's hash
+reveals the damage.
 
 \section{Corrected Evaluation Defects}
 
@@ -1079,9 +1079,9 @@ task.
 decoded graph --- braking or rerouting --- would turn the study from a
 communication evaluation into a cooperative-perception one.
 
-\textbf{Integrity protection.} The payload carries no checksum, and the flat v1
-format parses a truncated payload without complaint. A CRC field in the message
-would close this cleanly.
+\textbf{Integrity protection.} The payload carries no checksum, and the flat
+serialisation parses a truncated payload without complaint. A CRC field in the
+message would close this cleanly.
 
 \section{Concluding Remarks}
 
