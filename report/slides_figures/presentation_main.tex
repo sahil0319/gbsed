@@ -71,93 +71,47 @@ Saeera Tanjim \; (220041107)
     \titlepage
 \end{frame}
 
-% ================= Slide 2: Introduction =================
-\begin{frame}{Introduction}
+% ================= Slide 2: Introduction — Vehicular Networks =================
+\begin{frame}{Introduction: Vehicular Networks}
 
+\begin{columns}[T,onlytextwidth]
+
+% ---------------- LEFT: TEXT ----------------
+\begin{column}{0.58\textwidth}
 \begin{itemize}
-
-    \item \textbf{Connected and Autonomous Vehicles (CAVs)} continuously exchange
-    information about their \textbf{road environment} for driving.
-
-    \item This includes \textbf{road scenes, nearby vehicles, pedestrians, and road conditions},
-    resulting in large amounts of data.
-
-    \item Continuously transmitting this data creates a significant
-    \textbf{bandwidth and communication burden}.
-
-    \item Real vehicular channels also experience \textbf{noise, fading, interference,
-    and packet loss}, making reliable communication challenging.
-
+    \item \textbf{VANETs}: vehicles + roadside units (RSUs) exchange information
+    \item \textbf{V2V / V2I} communication for CAVs $\rightarrow$ safer, efficient \textbf{ITS}
+    \item Key challenges:
+    \begin{itemize}
+        \item \textbf{High mobility} $\rightarrow$ dynamic topology
+        \item \textbf{Short contact/link duration}
+        \item Frequent \textbf{link breakage}, intermittent connectivity
+        \item Strict \textbf{latency \& reliability} needs
+    \end{itemize}
 \end{itemize}
+\end{column}
 
-\vspace{0.45cm}
+% ---------------- RIGHT: IMAGE PLACEHOLDER ----------------
+\begin{column}{0.38\textwidth}
+\centering
+\includegraphics[width=\linewidth]{figures/ANET-communication-system-is-supported-by-DSRC-which-offers-V2V-and-V2I-communications.png}
+\end{column}
 
-\begin{center}
-    \textit{How can vehicles communicate the most important information
-    efficiently and reliably?}
-\end{center}
+\end{columns}
 
 \end{frame}
 
 % ============================================================
-% SLIDE — SEMANTIC COMMUNICATION
+% SLIDE — INTRODUCTION: SEMANTIC COMMUNICATION
 % ============================================================
-\begin{frame}{Semantic Communication}
-
-\begin{center}
-
-\textbf{Semantic communication} focuses on transmitting the
-\textit{meaning relevant to a task}, rather than all raw data.
-
-\vspace{0.55cm}
-
-\begin{tikzpicture}[
-    box/.style={
-        draw=mainblue,
-        rounded corners,
-        fill=lightblue,
-        minimum width=2.0cm,
-        minimum height=0.7cm,
-        align=center,
-        font=\small
-    },
-    arr/.style={
-        -{Latex[length=2mm]},
-        thick
-    }
-]
-
-\node[box] (data) at (-4.8,0)
-{Raw Data};
-
-\node[box] (extract) at (-1.7,0)
-{Semantic\\Extraction};
-
-\node[box] (transmit) at (1.4,0)
-{Relevant\\Information};
-
-\node[box] (task) at (4.5,0)
-{Task /\\Decision};
-
-\draw[arr] (data) -- (extract);
-\draw[arr] (extract) -- (transmit);
-\draw[arr] (transmit) -- (task);
-
-\end{tikzpicture}
-
-\vspace{0.55cm}
+\begin{frame}{Introduction: Semantic Communication}
 
 \begin{itemize}
-    \item Raw data is transformed into \textbf{task-relevant information}.
-    \item Only the \textbf{important semantic information} is transmitted.
-    \item The receiver uses it for the intended \textbf{task or decision}.
+    \item Raw sensor/camera data $\rightarrow$ \textbf{high bandwidth}, hard over unstable links
+    \item \textbf{Semantic Communication}: transmit \textbf{meaning}, not raw bits
 \end{itemize}
 
-\end{center}
-
-\end{frame}
-
-\begin{frame}{From Data Transmission to Meaning Transmission}
+\vspace{0.15cm}
 
 \begin{center}
 
@@ -228,13 +182,100 @@ Saeera Tanjim \; (220041107)
 
 \end{tikzpicture}
 
-\vspace{0.25cm}
-
-
 \end{center}
+
+\begin{itemize}
+    \item[$\Rightarrow$] Lower bandwidth \& latency, task-relevant info preserved
+\end{itemize}
 
 \end{frame}
 
+
+% ============================================================
+% SLIDE — SEMANTIC COMMUNICATION: SENDER-RECEIVER PIPELINE
+% ============================================================
+\begin{frame}{Semantic Communication: Sender–Receiver Pipeline}
+
+\begin{center}
+
+\begin{tikzpicture}[
+    box/.style={
+        draw=mainblue,
+        rounded corners,
+        fill=lightblue,
+        minimum width=2.1cm,
+        minimum height=0.75cm,
+        align=center,
+        font=\scriptsize
+    },
+    arr/.style={
+        -{Latex[length=1.8mm]},
+        thick
+    }
+]
+
+% ============================================================
+% ROW 1 — LEFT TO RIGHT
+% ============================================================
+
+\node[box] (raw) at (-4.8,0)
+{Raw Data};
+
+\node[box] (extract) at (-1.6,0)
+{Semantic\\Extraction};
+
+\node[box] (encode) at (1.6,0)
+{Semantic\\Encoder};
+
+\node[box] (channel) at (4.8,0)
+{Wireless\\Channel};
+
+\draw[arr] (raw.east) -- (extract.west);
+\draw[arr] (extract.east) -- (encode.west);
+\draw[arr] (encode.east) -- (channel.west);
+
+\node[font=\small\bfseries, mainblue] at (-1.6,0.9)
+{Sender};
+
+% ============================================================
+% CONNECT TO ROW 2
+% ============================================================
+
+\node[box] (decode) at (4.8,-1.8)
+{Semantic\\Decoder};
+
+\node[box] (reconstruct) at (1.6,-1.8)
+{Semantic\\Reconstruction};
+
+\node[box] (task) at (-1.6,-1.8)
+{Task /\\Decision};
+
+\draw[arr] (channel.south) -- (decode.north);
+
+% ============================================================
+% ROW 2 — RIGHT TO LEFT
+% ============================================================
+
+\draw[arr] (decode.west) -- (reconstruct.east);
+\draw[arr] (reconstruct.west) -- (task.east);
+
+\node[font=\small\bfseries, mainblue] at (1.6,-2.7)
+{Receiver};
+
+\end{tikzpicture}
+
+\end{center}
+
+\vspace{0.15cm}
+
+\begin{itemize}
+    \item \textbf{Sender}: extract + encode task-relevant information
+    \item Only \textbf{semantic info} crosses the wireless channel
+    \item \textbf{Receiver}: decode + reconstruct for the task
+    \item Evaluated in \textbf{Veins} (vehicular network simulation)
+\end{itemize}
+
+\end{frame}
 % ============================================================
 % SLIDE — WHY SEMANTIC COMMUNICATION FOR CAVs?
 % ============================================================
@@ -366,7 +407,7 @@ Semantic communication can reduce this burden by transmitting only
 % ============================================================
 % SLIDE — RELATED WORK
 % ============================================================
-\begin{frame}{Key Related Works}
+\begin{frame}{Key Related Work}
 
 \begin{itemize}
 
@@ -388,7 +429,7 @@ Semantic communication can reduce this burden by transmitting only
 
     \vspace{0.12cm}
 
-    \item \textbf{Knowledge Graph Representation Learning 
+    \item \textbf{Knowledge Graph Representation Learning
     \cite{hello2024knowledge}}
     \begin{itemize}
         \item Represents knowledge using compact graph embeddings.
@@ -408,7 +449,7 @@ Semantic communication can reduce this burden by transmitting only
 
 \begin{itemize}
 
-    \item \textbf{GBSED \cite{ribouh2026gbsed}}
+    \item \textbf{GBSED (Graph Based Semantic Encoder Decoder) \cite{ribouh2026gbsed}}
     \begin{itemize}
         \item Encodes driving scene graphs into a compact tensor
         representation for semantic transmission.
@@ -572,128 +613,163 @@ minimum height=0.8cm] (task)
 \end{frame}
 
 
-
 % ============================================================
-% SLIDE 9 — METHODOLOGY
+% SLIDE 11 — METHODOLOGY (OVERVIEW)
 % ============================================================
-\begin{frame}{Methodology}
+\begin{frame}{Methodology: Overview}
 
 \begin{center}
-
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
     box/.style={
         draw=mainblue,
-        rounded corners,
+        rounded corners=3pt,
         fill=lightblue,
-        minimum width=2.25cm,
-        minimum height=0.72cm,
+        minimum width=2.3cm,
+        minimum height=1cm,
+        text width=2.1cm,
         align=center,
-        font=\scriptsize
+        font=\scriptsize,
+        inner sep=2pt
+    },
+    lbl/.style={
+        align=center,
+        font=\tiny,
+        text width=2.6cm,
+        text depth=0pt
+    },
+    num/.style={
+        circle,
+        draw=mainblue,
+        fill=mainblue,
+        text=white,
+        font=\bfseries\small,
+        inner sep=1pt,
+        minimum size=5mm
     },
     arr/.style={
-        -{Latex[length=1.7mm]},
-        thick
+        -{Latex[length=1.5mm]},
+        thick,
+        mainblue
     }
 ]
 
 % ============================================================
-% TOP ROW: LEFT -> RIGHT
+% MAIN WORKFLOW — LEFT TO RIGHT
 % ============================================================
 
-\node[box] (image) {Road Image\\1280$\times$720};
+\node[box] (scene) at (0,0)
+{\textbf{Scene Generation}\\
+Image $\rightarrow$ Scene Graph};
 
-\node[box, right=0.45cm of image] (graph)
-    {Scene Graph};
+\node[box] (gbsed) at (3.4,0)
+{\textbf{GBSED Processing}\\
+Encode + Compress};
 
-\node[box, right=0.45cm of graph] (compress)
-    {Semantic\\Compression};
+\node[box] (network) at (6.8,0)
+{\textbf{Vehicular Network}\\
+Veins + SUMO + 802.11p};
 
-\node[box, right=0.45cm of compress] (serialize)
-    {Float16\\Serialization};
+\node[box] (eval) at (10.2,0)
+{\textbf{Network Evaluation}\\
+Delivery + Recovery};
 
-\draw[arr] (image) -- (graph);
-\draw[arr] (graph) -- (compress);
-\draw[arr] (compress) -- (serialize);
+\node[box] (compare) at (13.6,0)
+{\textbf{Comparison}\\
+JPEG / WebP + Graceful Degradation};
+
+% Arrows
+\draw[arr] (scene.east) -- (gbsed.west);
+\draw[arr] (gbsed.east) -- (network.west);
+\draw[arr] (network.east) -- (eval.west);
+\draw[arr] (eval.east) -- (compare.west);
+
+% Stage numbers (anchor the next slide's grouping to these)
+\node[num] at (scene.north west) {1};
+\node[num] at (gbsed.north west) {2};
+\node[num] at (network.north west) {3};
+\node[num] at (eval.north west) {4};
+\node[num] at (compare.north west) {5};
 
 % ============================================================
-% BOTTOM ROW: RIGHT -> LEFT
+% DETAILS — manual line breaks, no auto-wrap surprises
 % ============================================================
 
-\node[box, below=1.15cm of serialize] (network)
-    {Chunk + Base64\\IEEE 802.11p};
+\node[lbl] at (0,-1.15) {Object\\Detection};
+\node[lbl] at (3.4,-1.15) {Float16\\Serialization};
+\node[lbl] at (6.8,-1.15) {Moving V2V\\Vehicles};
+\node[lbl] at (10.2,-1.15) {Semantic +\\Safety Recovery};
+\node[lbl] at (13.6,-1.15) {Matched Budget +\\Graceful Degradation};
 
-\node[box, left=0.45cm of network] (deserialize)
-    {Deserialization};
-
-\node[box, left=0.45cm of deserialize] (decompress)
-    {Semantic\\Decompression};
-
-\node[box, left=0.45cm of decompress] (recon)
-    {Reconstructed\\Graph};
-
-\draw[arr] (network) -- (deserialize);
-\draw[arr] (deserialize) -- (decompress);
-\draw[arr] (decompress) -- (recon);
-
-% Connect transmitter to network
-\draw[arr] (serialize) -- (network);
-
-\end{tikzpicture}
+\end{tikzpicture}%
+}
+\end{center}
 
 \vspace{0.35cm}
 
-\textbf{Two SUMO vehicles move apart while exchanging semantic payloads.}
+\begin{itemize}
 
-\vspace{0.1cm}
+    \item \textbf{Semantic pipeline (1–2):}
+    convert road images into compact GBSED scene-graph payloads.
 
-\scriptsize
-\textit{The reconstructed graph is evaluated for semantic fidelity and safety-critical relations.}
+    \item \textbf{Network experiments (3–4):}
+    transmit payloads between moving vehicles under different channel conditions.
 
-\end{center}
+    \item \textbf{Evaluation (5):}
+    compare GBSED with JPEG/WebP at matched byte budgets and test
+    graceful degradation of the semantic payload.
 
-\end{frame}
-
-
-% ============================================================
-% SLIDE 10 — PROCESSING
-% ============================================================
-\begin{frame}{Methodology: Processing Stages}
-
-\begin{enumerate}
-
-    \item \textbf{Scene Understanding}
-
-    Road image $\rightarrow$ Scene graph
-
-    \item \textbf{Semantic Representation}
-
-    Scene graph $\rightarrow \left(T,\;F\right)$
-
-    \scriptsize
-    $T$: relation tensor, $F$: node features
-
-    \normalsize
-    \item \textbf{Semantic Compression}
-
-    Remove relation types absent from the scene
-
-    \item \textbf{Serialization}
-
-    Compressed representation $\rightarrow$ Float16 bytes
-
-    \item \textbf{Network Transmission}
-
-    Bytes $\rightarrow$ chunks $\rightarrow$ Base64 $\rightarrow$
-    IEEE 802.11p
-
-    \item \textbf{Reconstruction}
-
-    Received bytes $\rightarrow$ deserialization $\rightarrow$
-    semantic decompression $\rightarrow$ scene graph
-
-\end{enumerate}
+\end{itemize}
 
 \end{frame}
+
+
+% % ============================================================
+% % SLIDE 12 — METHODOLOGY (PROCESSING STAGES, MAPPED TO OVERVIEW)
+% % ============================================================
+% \begin{frame}{Methodology: Processing Stages}
+
+% \begin{enumerate}
+
+%     \item[\textbf{1}] \textbf{Scene Understanding}
+
+%     Road image $\rightarrow$ Scene graph
+
+%     \item[\textbf{2}] \textbf{GBSED Processing}
+
+%     \begin{enumerate}
+%         \item \textbf{Semantic Representation:}
+%         Scene graph $\rightarrow \left(T,\;F\right)$
+
+%         \scriptsize
+%         $T$: relation tensor, $F$: node features
+%         \normalsize
+
+%         \item \textbf{Semantic Compression:}
+%         Remove relation types absent from the scene
+
+%         \item \textbf{Serialization:}
+%         Compressed representation $\rightarrow$ Float16 bytes
+%     \end{enumerate}
+
+%     \item[\textbf{3}] \textbf{Vehicular Network Transmission}
+
+%     Bytes $\rightarrow$ chunks $\rightarrow$ Base64 $\rightarrow$
+%     IEEE 802.11p
+
+%     \item[\textbf{4}] \textbf{Network Evaluation / Reconstruction}
+
+%     Received bytes $\rightarrow$ deserialization $\rightarrow$
+%     semantic decompression $\rightarrow$ scene graph
+
+% \end{enumerate}
+
+% \vspace{0.2cm}
+% \textit{\footnotesize Stage 5 (Comparison against JPEG/WebP) is covered
+% in the evaluation section.}
+
+% \end{frame}
+
 
 
 % ============================================================
@@ -739,7 +815,54 @@ no GBSED retraining was performed.}
 
 \end{frame}
 
+% ============================================================
+% SLIDE 12 — OUR CONTRIBUTION
+% ============================================================
+\begin{frame}{Our Contribution}
 
+\begin{columns}[T]
+
+\column{0.48\textwidth}
+
+\textbf{What We Built}
+
+\begin{itemize}
+    \item Integrated \textbf{GBSED with Veins}
+    \item Connected \textbf{GBSED--OMNeT++--SUMO}
+    \item Implemented binary payload transmission from extracted scene graph
+    \item Enabled semantic graph reconstruction
+\end{itemize}
+
+\column{0.48\textwidth}
+
+\textbf{What We Evaluated}
+
+\begin{itemize}
+    \item Semantic delivery over \textbf{802.11p}
+    \item Packet delivery under different channel conditions
+    \item \textbf{GBSED vs JPEG / WebP} at matched budgets
+    \item Semantic recovery and safety relations
+    \item \textbf{Graceful degradation} using GBSED
+\end{itemize}
+
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{center}
+\setlength{\fboxsep}{8pt}
+\fcolorbox{mainblue}{lightblue}{
+\begin{minipage}{0.82\textwidth}
+\centering
+\textbf{Main Contribution:}\\
+Extending GBSED from a physical-layer semantic communication model
+to a \textbf{network-level vehicular communication evaluation}
+using Veins, SUMO, and IEEE 802.11p.
+\end{minipage}
+}
+\end{center}
+
+\end{frame}
 % ============================================================
 % SLIDE 12 — ARCHITECTURE
 % ============================================================
@@ -810,7 +933,6 @@ no GBSED retraining was performed.}
     \item SUMO mobility
     \item IEEE 802.11p
     \item V2V broadcast
-    \item Two vehicles
     \item Vehicles move apart
 \end{itemize}
 
@@ -852,38 +974,30 @@ Vehicles diverge at right angles at 8 m/s to create increasing separation.
 \begin{frame}{Results: Network Delivery}
 
 \begin{center}
-\includegraphics[width=0.70\textwidth]{figures/network_delivery.png}
+\includegraphics[width=0.57\textwidth]{figures/network_delivery.png}
 \end{center}
 
 \vspace{-0.1cm}
 
+{\small
 \begin{itemize}
     \item Rising noise and increasing separation sharply reduce payload delivery.
     \item \textbf{Every successfully delivered frame reconstructed exactly.}
     \item Degradation is therefore \textbf{frame availability}, not partial corruption.
-    \item Measured range cliff: approximately \textbf{488 m}.
+   % \item Measured range cliff: approximately \textbf{488 m}.
 \end{itemize}
+}
 
 \end{frame}
 
 
 % ============================================================
-% SLIDE 15 — FIXED BUDGET
+% SLIDE 15 — FIXED BUDGET, REAL CHANNEL (REDESIGNED)
 % ============================================================
-\begin{frame}{Results: GBSED vs.\ Image Transmission}
+\begin{frame}{Results: Same Byte Budget, Real Channel}
 
 \begin{center}
-\includegraphics[width=0.90\textwidth]{figures/matched_budget.png}
-\end{center}
-
-\vspace{0.1cm}
-
-\begin{center}
-\small
-At $\sim$811 B/frame, delivery is identical (70\%) for all three ---
-\textbf{same bytes, same channel, same frames}.
-Only the scene graph preserves the safety-critical relations
-(\textbf{GBSED 32/32}, WebP 0/32, JPEG 0/32).
+\includegraphics[height=0.82\textheight]{figures/matched_budget.png}
 \end{center}
 
 \end{frame}
@@ -895,11 +1009,11 @@ Only the scene graph preserves the safety-critical relations
 \begin{frame}{Results: How Much Bandwidth Do Images Need?}
 
 \begin{center}
-\includegraphics[width=0.78\textwidth]{figures/bandwidth_gap.png}
+\includegraphics[width=0.6\textwidth]{figures/bandwidth_gap.png}
 \end{center}
 
 \vspace{-0.05cm}
-
+{\small
 \begin{itemize}
     \item GBSED preserves \textbf{44/44} safety-critical relations at only
           \textbf{811 B/frame}.
@@ -908,6 +1022,7 @@ Only the scene graph preserves the safety-critical relations
     \item Efficiency: GBSED \textbf{369 B} vs.\ WebP \textbf{35,368 B} per
           preserved safety relation.
 \end{itemize}
+}
 
 \end{frame}
 
@@ -948,13 +1063,13 @@ the vehicle encounter.}}
 \begin{frame}{Results: Graceful Semantic Degradation}
 
 \begin{center}
-\includegraphics[width=0.93\textwidth]{figures/loss_resilience.png}
+\includegraphics[width=0.65\textwidth]{figures/loss_resilience.png}
 \end{center}
 
 \vspace{-0.05cm}
 
 \begin{center}
-\small
+\tiny
 The payload packs whole relation slices into independent chunks,
 \textbf{safety-critical relations first}. A lost chunk removes a relation
 \emph{type} instead of the whole frame.
@@ -965,83 +1080,56 @@ The payload packs whole relation slices into independent chunks,
 
 \begin{frame}{Why Does Semantic Communication Work Here?}
 
-\begin{center}
-{\Large \textbf{The task does not need the whole image.}}
-
-\vspace{0.35cm}
-
-
 \noindent
+\begin{center}
 \textbf{\large Why GBSED fits this task}
+\end{center}
 
-\vspace{0.2cm}
+\begin{center}
+\textbf{The task does not need the whole image.}
+\end{center}
+
+\vspace{0.25cm}
 
 \begin{columns}[T]
 
 \column{0.32\textwidth}
-
-\textbf{\large 1. Compress the Right Information}
-
-\vspace{0.12cm}
-
-The image contains much more information
-than the risk-assessment task needs.
-
-\vspace{0.12cm}
-
-GBSED keeps the information that matters:
+\small
+\textbf{ 1. Compress the Right Information}
 
 \begin{itemize}
-\item Objects
-\item Positions
-\item Relations
+    \item Image has unnecessary visual detail.
+    \item GBSED keeps:
+    \begin{itemize}
+        \item Objects
+        \item Positions
+        \item Relations
+    \end{itemize}
 \end{itemize}
 
-\column{0.32\textwidth}
-
-\textbf{\large 2. Degrade Differently}
-
-\vspace{0.12cm}
-
-Image compression progressively loses
-visual detail.
-
-\vspace{0.12cm}
-
-A scene graph can lose individual
-relation types while preserving the
-remaining semantic structure.
 
 \column{0.32\textwidth}
+\small
+\textbf{ 2. Degrade Differently}
 
-\textbf{\large 3. Meaning Is Discrete}
+\begin{itemize}
+    \item Image compression loses visual detail.
+    \item Semantic data loses relation types.
+    \item Remaining structure stays meaningful.
+\end{itemize}
 
-\vspace{0.12cm}
 
-A relation is essentially:
+\column{0.32\textwidth}
+\small
+\textbf{ 3. Meaning Is Discrete}
 
-\[
-\text{present / absent}
-\]
-
-A label is a small integer.
-
-\vspace{0.12cm}
-
-Valid semantic content can therefore
-remain exact even with limited bandwidth.
+\begin{itemize}
+    \item Relations: present / absent.
+    \item Labels: small integers.
+    \item Semantic content can remain exact.
+\end{itemize}
 
 \end{columns}
-
-\vspace{0.35cm}
-
-\noindent
-\rule{\textwidth}{0.5pt}
-
-
-
-\end{center}
-
 \end{frame}
 
 
@@ -1052,79 +1140,76 @@ remain exact even with limited bandwidth.
 % ============================================================
 \begin{frame}{Challenges During Implementation}
 
+\small
+
 \begin{itemize}
 
-    \item \textbf{Complex dependencies}
+    \item \textbf{Integrating GBSED with Veins + SUMO}
     \begin{itemize}
-        \item Setting up TensorFlow, Sionna and detectron2.
+        \item Connecting the GBSED encoder--decoder pipeline
+        with the Veins wireless network.
+        \item Building a GBSED-specific vehicular network scenario.
     \end{itemize}
 
-    \vspace{0.12cm}
+    \vspace{0.08cm}
 
-    \item \textbf{Adapting the GBSED pipeline}
+    \item \textbf{Adapting Legacy Components}
     \begin{itemize}
-        \item Connecting semantic processing with the Veins wireless network.
+        \item RoadScene2Vec (used for \textbf{scene-graph generation})
+        relied on an older software stack.
+        \item Adapting and consolidating it for our project
+        required modifying the existing pipeline.
     \end{itemize}
 
-    \vspace{0.12cm}
+    \vspace{0.08cm}
 
-    \item \textbf{Python--Veins integration}
+    \item \textbf{Risk Assessment Limitations}
     \begin{itemize}
-        \item Converting semantic data into transmittable bytes.
-    \end{itemize}
-
-    \vspace{0.12cm}
-
-    \item \textbf{Creating a meaningful network scenario}
-    \begin{itemize}
-        \item Adjusting vehicle movement to observe packet loss.
-    \end{itemize}
-
-    \vspace{0.12cm}
-
-    \item \textbf{Checking experimental results}
-    \begin{itemize}
-        \item Finding and fixing configuration and metric errors.
+        \item The available risk-assessment images contained only
+        one class: \textbf{risky}.
+        \item Without a non-risky class, meaningful risk-prediction
+        evaluation was not possible.
+        \item The whole $\sim$55.4~GB dataset also exceeded our practical
+        processing capacity within the available time and CPU resources.
     \end{itemize}
 
 \end{itemize}
 
 \end{frame}
 
-
 % ============================================================
 % SLIDE 21 — LIMITATIONS
 % ============================================================
 \begin{frame}{Limitations}
 
+\small
+
 \begin{itemize}
 
-    \item Both driving sequences were labelled as risky, so we
-          could not compare risky and safe cases.
+    \item \textbf{Risk assessment could not be fully evaluated}
+    \begin{itemize}
+        \item The available risk-assessment data contained only the
+        \textbf{risky} class, with no safe/non-risky cases for comparison.
+        \item The original $\sim$55.4~GB dataset was not feasible to
+        process with our available time and CPU resources.
+    \end{itemize}
 
-    \vspace{0.15cm}
+    \vspace{0.12cm}
 
-    \item Only two driving sequences and two vehicles were tested.
+    \item \textbf{Simple network scenario}
+    \begin{itemize}
+        \item We used only a simple mobility scenario
+        to isolate and study the communication behaviour.
+        \item Larger and more congested scenarios were not evaluated yet.
+    \end{itemize}
 
-    \vspace{0.15cm}
+    \vspace{0.12cm}
 
-    \item Only two vehicles were used, so there was very little
-          network traffic.
-
-    \vspace{0.15cm}
-
-    \item The risk labels were based on simple rules.
-
-    \vspace{0.15cm}
-
-    \item The slice-aligned payload helps most when a frame spans several
-          chunks; with larger chunks or sparser scenes a single chunk already
-          carries the whole frame, so there is nothing to lose partially.
-
-    \vspace{0.15cm}
-
-    \item More vehicle movement and network conditions need to
-          be tested to better understand the communication range.
+    \item \textbf{Ground-truth limitation}
+    \begin{itemize}
+        \item We generated our own ground truth for predictions using simple rule-based labels because the original dataset could not
+        be processed.
+    \end{itemize}
 
 \end{itemize}
 
@@ -1134,133 +1219,127 @@ remain exact even with limited bandwidth.
 % ============================================================
 \begin{frame}{Conclusion}
 
+\small
+
 \begin{center}
-\Large
 \textbf{What We Demonstrated}
 \end{center}
 
-\vspace{0.25cm}
+\vspace{0.1cm}
 
 \begin{itemize}
 
-    \item Integrated GBSED with \textbf{Veins, OMNeT++, SUMO}
-          and IEEE 802.11p for vehicular communication.
+    \item Integrated the GBSED pre-trained encoder--decoder with
+          \textbf{Veins, OMNeT++, SUMO}
+          for vehicular communication.
 
-    \item Successfully reconstructed semantic payloads when
-          network frames were delivered.
+    \vspace{0.1cm}
+
+    \item Successfully reconstructed the semantic scene graph
+          when network frames were delivered.
+
+    \vspace{0.1cm}
 
     \item At the \textbf{same byte budget}, GBSED preserved
-          safety-critical relations while JPEG/WebP did not.
+          safety-critical relations, while JPEG/WebP did not.
 
-    \item WebP needed approximately \textbf{96$\times$ more bandwidth}
+    \vspace{0.1cm}
+
+    \item WebP required approximately \textbf{96$\times$ more bandwidth}
           to achieve the same safety-relation preservation.
 
-    \item The payload is packed so that semantic information degrades
-          \textbf{by relation content} --- a lost packet costs a relation
-          type, not the whole frame.
+    \vspace{0.1cm}
+
+    \item Demonstrated \textbf{graceful semantic degradation}:
+          a lost chunk can remove a relation type rather than
+          destroying the entire frame.
 
 \end{itemize}
 
-
-
 \end{frame}
-
 
 % ============================================================
 % SLIDE 23 — FUTURE WORK
-% ============================================================
+% ===========================================================
 \begin{frame}{Future Work}
+
+\small
 
 \begin{itemize}
 
-    \item Validate realistic distance-dependent path loss.
+\item \textbf{Expand the vehicular network scenario}
+\begin{itemize}
+    \item Introduce more vehicles, realistic mobility, wireless
+    contention, and varied network configurations.
+\end{itemize}
 
-    \item Test realistic vehicle mobility and wireless contention.
+\item \textbf{Complete the risk assessment pipeline}
+\begin{itemize}
+    \item Evaluate risk prediction using more diverse and properly
+    labelled driving scenarios.
+\end{itemize}
 
-    \item Improve semantic payload recovery and integrity checks.
+\item \textbf{Connect risk assessment to vehicle actions}
+\begin{itemize}
+    \item Use predicted risk to drive appropriate vehicle responses
+    through a \textbf{control-in-the-loop} framework.
+\end{itemize}
 
-    \item Evaluate on larger and more diverse datasets.
-
-    \item Improve risk ground truth and compare compression levels.
-
-    \item Study the minimum semantic information needed for reliable decisions.
+\item \textbf{Study semantic information requirements}
+\begin{itemize}
+    \item Investigate how much semantic information is needed for
+    reliable risk assessment and decision-making.
+\end{itemize}
 
 \end{itemize}
 
 \end{frame}
 
-% ============================================================
-% SLIDE 24 — GITHUB & CONTRIBUTION
-% ============================================================
-\begin{frame}{GitHub \& Individual Contributions}
+
+\begin{frame}{Individual Contributions}
+
+\small
 
 \begin{columns}[T]
 
-% ------------------------------------------------------------
-% LEFT COLUMN — GITHUB
-% ------------------------------------------------------------
-\begin{column}{0.42\textwidth}
+\begin{column}{0.32\textwidth}
 
-\textbf{\large GitHub}
-
-\vspace{0.25cm}
+\begin{center}
+\textbf{Maisha Sanjida}
+\end{center}
 
 \begin{itemize}
-
-    \item \small Original GBSED Repository:
-    
-    \href{https://github.com/philpolo/gbsed}{GBSED}
-
-    \vspace{0.15cm}
-
-    \item \small Our GBSED Repository:
-    
-    \href{https://github.com/sahil0319/gbsed}{GBSED Repository}
-
-    \vspace{0.15cm}
-
-    \item \small Our Veins Repository:
-    
-    \href{https://github.com/Loona6/gbsed_veins}{Veins Repository}
-
+\item Veins + SUMO simulation setup and necessary Simulation file creation
+\item Binary payload serialization \& network transmission
+\item Risk assessment \& ground-truth generation
 \end{itemize}
 
 \end{column}
 
+\begin{column}{0.32\textwidth}
 
-% ------------------------------------------------------------
-% RIGHT COLUMN — CONTRIBUTIONS
-% ------------------------------------------------------------
-\begin{column}{0.55\textwidth}
-
-\textbf{\large Individual Contributions}
-
-\vspace{0.2cm}
+\begin{center}
+\textbf{Saeera Tanjim}
+\end{center}
 
 \begin{itemize}
+\item Different Simulation scenario configurations
+\item GBSED encoder--decoder evaluation
+\item Packet delivery and range analysis from results
+\end{itemize}
 
-    \item \textbf{Maisha Sanjida}
-    \begin{itemize}
-        \item Veins + SUMO framework building.
-        \item Risk prediction assessment.
-    \end{itemize}
+\end{column}
 
-    \vspace{0.08cm}
+\begin{column}{0.32\textwidth}
 
-    \item \textbf{Saeera Tanjim}
-    \begin{itemize}
-        \item Configured the `.ini` file for different scenarios.
-        \item Evaluated encoder--decoder.
-    \end{itemize}
+\begin{center}
+\textbf{Mahdi Islam}
+\end{center}
 
-    \vspace{0.08cm}
-
-    \item \textbf{Mahdi Islam}
-    \begin{itemize}
-        \item Modified the encoder--decoder for integration.
-        \item Analyzed communication and semantic performance.
-    \end{itemize}
-
+\begin{itemize}
+\item Encoder--decoder integration in Veins
+\item Payload encoding, chunking \& decoding
+\item Graceful degradation \& performance analysis between JPEG, WebP and semantic scene graph
 \end{itemize}
 
 \end{column}
@@ -1268,6 +1347,55 @@ remain exact even with limited bandwidth.
 \end{columns}
 
 \end{frame}
+
+
+
+\begin{frame}{GitHub \& Resources}
+
+\begin{center}
+
+\textbf{\large Original GBSED Repository}
+
+\vspace{0.08cm}
+
+\href{https://github.com/philpolo/gbsed}
+{\small \texttt{github.com/philpolo/gbsed}}
+
+\vspace{0.4cm}
+
+\textbf{\large Our GBSED Repository}
+
+\vspace{0.08cm}
+
+\href{https://github.com/sahil0319/gbsed}
+{\small \texttt{github.com/sahil0319/gbsed}}
+
+\vspace{0.4cm}
+
+\textbf{\large Our Veins Repository}
+
+\vspace{0.08cm}
+
+\href{https://github.com/Loona6/gbsed_veins}
+{\small \texttt{github.com/Loona6/gbsed\_veins}}
+
+\end{center}
+
+\vfill
+
+\begin{center}
+\small
+All implementation, simulation, and supporting code are available in the repositories above.
+\end{center}
+
+\end{frame}
+
+
+
+
+
+
+
 % ============================================================
 % SLIDE 25 — REFERENCES
 % ============================================================

@@ -18,7 +18,7 @@ decoded/
 # sizes and chunk counts the analysis cites.
 image_data_*_full/*.bin
 
-# LaTeX build artefacts
+# LaTeX build artefacts (both report/main.tex and the presentation deck)
 report/*.aux
 report/*.bbl
 report/*.bcf
@@ -31,3 +31,22 @@ report/*.lot
 report/*.out
 report/*.run.xml
 report/*.toc
+report/slides_figures/*.aux
+report/slides_figures/*.bbl
+report/slides_figures/*.bcf
+report/slides_figures/*.blg
+report/slides_figures/*.fdb_latexmk
+report/slides_figures/*.fls
+report/slides_figures/*.log
+report/slides_figures/*.nav
+report/slides_figures/*.out
+report/slides_figures/*.pdf
+report/slides_figures/*.run.xml
+report/slides_figures/*.snm
+report/slides_figures/*.synctex.gz
+report/slides_figures/*.toc
+
+# ad-hoc per-frame image dumps from `image_decode.py --save-images`,
+# regenerable, not analysis output
+decoded_images_webp/
+decoded_images_jpeg/

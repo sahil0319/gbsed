@@ -103,41 +103,161 @@ def fig_network_delivery():
 
 
 def fig_matched_budget():
-    """Slide 15. Same bytes, same channel: safety relations preserved,
-    GBSED vs the two image codecs. Single clear panel."""
-    fig, (axL, axR) = plt.subplots(1, 2, figsize=(12.5, 5.4),
-                                   gridspec_kw={"width_ratios": [1, 1.05]})
+    """Slide "Results: same byte budget, real channel". Redesigned from the
+    original two-disconnected-bar-charts version, which readers found
+    confusing ("what does 70% delivered even mean here?"). The new version
+    makes the causal chain explicit and shows one concrete frame's ACTUAL
+    received bytes, decoded, next to the ACTUAL reconstructed scene graph --
+    not just aggregate bars -- so "0 safety relations" is something you can
+    see rather than only a number.
 
-    # left: delivery identical
+    Uses frame_0013 (00097109.jpg): the densest frame in the matched-budget
+    set, GBSED payload 1354 B, and it contains a near_coll (collision-risk)
+    relation, so the contrast is as concrete as possible. This frame was
+    actually delivered under Baseline in all three arms -- the images shown
+    are the real received-and-decoded bytes, not illustrations.
+
+    Every element is placed with an explicit figure-fraction rectangle
+    (fig.add_axes) rather than gridspec + manual overrides, to avoid the
+    title/panel collisions that approach produced.
+    """
+    import json
+    import gbsed_semantic as gs
+    import matplotlib.image as mpimg
+    from matplotlib.patches import FancyBboxPatch
+    import cv2
+
+    stem = "frame_0013"
+    gbsed_meta_path = REPO / "scene_data_seq1" / f"{stem}.meta.json"
+    if not gbsed_meta_path.is_file():
+        print("SKIP fig_matched_budget: %s not found" % gbsed_meta_path)
+        return
+
+    cfg = gs.load_config()
+    ae, _ = gs.make_autoencoder(cfg)
+    raw = (REPO / "scene_data_seq1" / f"{stem}.bin").read_bytes()
+    sg, _ = gs.decode_payload(ae, raw)
+    tmp = OUT / "_tmp_graph"
+    tmp.mkdir(exist_ok=True)
+    gs.maybe_visualize(sg, tmp / "graph.png")
+    graph_img = mpimg.imread(tmp / "graph.png")
+
+    def load_received(setname):
+        p = (REPO / "experiment_results_image" /
+             f"received_image_data_seq1_{setname}_Baseline" / f"received_{stem}.bin")
+        raw = p.read_bytes()
+        img = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return img, len(raw)
+
+    webp_img, webp_bytes = load_received("webp")
+    jpeg_img, jpeg_bytes = load_received("jpeg")
+    gbsed_bytes = len(raw)
+
+    # -------------------------------------------------------------- layout
+    # All positions are explicit [left, bottom, width, height] in figure
+    # fraction (0-1), top to bottom, with a fixed gap between every band so
+    # nothing can overlap regardless of image aspect ratio.
+    fig = plt.figure(figsize=(15, 10.2))
+
+    TITLE_Y   = 0.965
+    BAND1_TOP, BAND1_BOT   = 0.86, 0.70    # the 4 causal-chain steps
+    BAND2_TOP, BAND2_BOT   = 0.66, 0.28    # the 3 real outputs for one frame
+    BAND2_IMG_TOP, BAND2_IMG_BOT = 0.62, 0.34   # image area within band 2
+    BAND3_TOP, BAND3_BOT   = 0.20, 0.06    # aggregate bar chart
+
+    fig.text(0.5, TITLE_Y,
+             "Same byte budget, same real channel: only the meaning of the bytes differs",
+             ha="center", fontsize=16, weight="bold")
+
+    # ---- band 1: the causal chain, one box per step -----------------------
+    axT = fig.add_axes([0.03, BAND1_BOT, 0.94, BAND1_TOP - BAND1_BOT])
+    axT.axis("off")
+    steps = [
+        ("1", f"Each encoding is given the\nSAME byte budget\n(~{gbsed_bytes} B/frame)"),
+        ("2", "All three are sent over the\nSAME live 802.11p simulation\n(Baseline channel)"),
+        ("3", "Delivery is IDENTICAL: 70%\n(14/20 frames) -- the channel\nonly sees packet size"),
+        ("4", "But what those bytes DECODE\nINTO is not identical --\nsee below"),
+    ]
+    n = len(steps)
+    gap = 0.03
+    w = (1 - gap * (n - 1)) / n
+    for i, (num, txt) in enumerate(steps):
+        x0 = i * (w + gap)
+        col = GREEN if i < 3 else ORANGE
+        axT.add_patch(FancyBboxPatch((x0, 0.06), w, 0.88,
+            boxstyle="round,pad=0.02", facecolor="#f5f5f5", edgecolor=col,
+            linewidth=1.8, transform=axT.transAxes, clip_on=False))
+        axT.text(x0 + w / 2, 0.80, num, ha="center", va="top", fontsize=16,
+                 weight="bold", color=col, transform=axT.transAxes)
+        axT.text(x0 + w / 2, 0.62, txt, ha="center", va="top", fontsize=10.8,
+                 transform=axT.transAxes)
+        if i < n - 1:
+            axT.annotate("", xy=(x0 + w + gap * 0.15, 0.5),
+                        xytext=(x0 + w - gap * 0.15 + gap, 0.5),
+                        xycoords="axes fraction",
+                        arrowprops=dict(arrowstyle="-|>", color="#888", lw=1.8))
+    axT.set_xlim(0, 1); axT.set_ylim(0, 1)
+
+    # ---- band 2: one real frame, three real outcomes -----------------------
+    # Ground truth for this frame: 18/18 edges recovered exactly by GBSED
+    # (experiment_results/decoded_seq1_Baseline/fidelity.csv, frame 13,
+    # status=EXACT), including 2 near_coll (collision-risk) instances.
+    # WebP's detector actually found 2 objects in the received image but
+    # recovered neither near_coll relation; JPEG's detector found nothing.
+    # (experiment_results_image/decoded_image_data_seq1_{webp,jpeg}_Baseline/
+    # fidelity.csv, frame 13: n_detections 2 and 0 respectively.) Both
+    # numbers are used as measured, not asserted -- "2 detected, still 0/2"
+    # is a stronger and more honest claim than "nothing detectable".
+    panels = [
+        (graph_img, GREEN,
+         f"GBSED scene graph\n{gbsed_bytes} B received",
+         "18/18 edges recovered exactly\nnear_coll PRESERVED (2/2)", True),
+        (webp_img, RED,
+         f"WebP image\n{webp_bytes} B received, {webp_img.shape[1]}×{webp_img.shape[0]} px",
+         "2 objects detected, but\n0/2 near_coll relations recovered", False),
+        (jpeg_img, PURPLE,
+         f"JPEG image\n{jpeg_bytes} B received, {jpeg_img.shape[1]}×{jpeg_img.shape[0]} px",
+         "0 objects detected --\n0/2 near_coll relations recovered", False),
+    ]
+    pw = 0.29
+    px = [0.035, 0.355, 0.675]
+    for (img, col, title, verdict, ok), x0 in zip(panels, px):
+        fig.text(x0 + pw / 2, BAND2_TOP + 0.005, title, ha="center", va="bottom",
+                 fontsize=11.5, weight="bold", color=col)
+        ax = fig.add_axes([x0, BAND2_IMG_BOT, pw, BAND2_IMG_TOP - BAND2_IMG_BOT])
+        ax.imshow(img, interpolation="nearest" if not ok else None)
+        ax.set_xticks([]); ax.set_yticks([])
+        for sp in ax.spines.values():
+            sp.set_edgecolor(col); sp.set_linewidth(2.4)
+        vcol = GREEN if ok else RED
+        fig.text(x0 + pw / 2, BAND2_IMG_BOT - 0.015, verdict, ha="center",
+                 va="top", fontsize=11, weight="bold", color=vcol)
+
+    # ---- band 3: the aggregate result, all 20 frames -----------------------
+    axB = fig.add_axes([0.12, BAND3_BOT, 0.80, BAND3_TOP - BAND3_BOT])
     arms = ["GBSED", "WebP", "JPEG"]
     colors = [GREEN, RED, PURPLE]
-    deliv = [70, 70, 70]
-    b = axL.bar(arms, deliv, color=colors, width=0.62)
-    for bar in b:
-        axL.text(bar.get_x() + bar.get_width() / 2, 71.5, "70%",
-                 ha="center", fontsize=14, weight="bold")
-    axL.set_ylim(0, 85)
-    axL.set_ylabel("Frames delivered (%)")
-    axL.set_title("Delivery is identical\n(same bytes → same packets)", fontsize=14)
-    axL.grid(alpha=0.3, axis="y")
-
-    # right: safety relations preserved
     safety = [32, 0, 0]
-    b = axR.bar(arms, safety, color=colors, width=0.62)
-    for bar, v in zip(b, safety):
-        axR.text(bar.get_x() + bar.get_width() / 2, v + 0.8,
-                 f"{v}/32", ha="center", fontsize=14, weight="bold",
+    bars = axB.barh(arms, safety, color=colors, height=0.55)
+    for bar, v in zip(bars, safety):
+        axB.text(v + 0.6, bar.get_y() + bar.get_height() / 2, f"{v}/32",
+                 va="center", fontsize=12.5, weight="bold",
                  color=(GREEN if v else RED))
-    axR.set_ylim(0, 36)
-    axR.set_ylabel("Safety-critical relations preserved")
-    axR.set_title("Only the scene graph\npreserves the safety relations", fontsize=14)
-    axR.grid(alpha=0.3, axis="y")
+    axB.set_xlim(0, 36)
+    axB.set_xlabel("Safety-critical relations preserved, all 20 frames "
+                   "(identical delivery in all three arms)", fontsize=10.5)
+    axB.invert_yaxis()
+    axB.grid(alpha=0.3, axis="x")
+    for sp in ("top", "right"):
+        axB.spines[sp].set_visible(False)
 
-    fig.suptitle("At the same byte budget, only the representation differs",
-                 fontsize=16, weight="bold", y=1.01)
-    fig.tight_layout()
-    fig.savefig(OUT / "matched_budget.png", dpi=150, bbox_inches="tight")
+    out = OUT / "matched_budget.png"
+    fig.savefig(out, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
+    for f in tmp.glob("*"):
+        f.unlink()
+    tmp.rmdir()
     print("wrote matched_budget.png")
 
 
