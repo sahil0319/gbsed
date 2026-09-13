@@ -1,218 +1,454 @@
-# Results overview
+# Project overview — everything, start to finish
 
-Everything measured so far, what each figure shows, and which of the earlier
-figures are superseded.
+What this project is, what we built, every experiment we ran, what we found,
+and where all of it lives. Plain language; no prior context assumed.
 
-> Not to be confused with `../gbsed_veins/overview.md`, which orients an AI
-> assistant on the *codebase*. This file is about the *results*.
-> The full argument and method are in **`comparison/ANALYSIS.md`**.
-
----
-
-## 1. Headline findings
-
-**1. At a fixed bit budget, pixels recover nothing.** Re-encoding each image to
-that frame's exact GBSED byte budget gives identical delivery over the same
-channel — and 0/44 safety-critical relations recovered, against GBSED's 44/44.
-
-**2. Pixels need ~96× more bandwidth to catch up.** WebP first matches GBSED's
-safety-relation recall at 77,809 B/frame vs GBSED's 811. JPEG never does within
-the sweep (109× and still short). As efficiency: **369 bytes per preserved
-safety relation for GBSED, 35,368 for WebP.**
-
-**3. Sending the whole frame is not merely wasteful, it is impossible here.**
-24.8 MB for 20 frames — 1531× — needing 17.3 hours of simulated time against a
-125 s vehicle lifetime. Measured: 1.24% of the first frame arrived.
-
-**4. Slice-aligned packing (format v2) buys graceful degradation for free.**
-At 500 B chunks, safety-relation recall under partial delivery goes from
-0.80/0.50 (v1) to 1.00/1.00 (v2), with identical bytes, identical delivery, and
-zero extra chunks on the wire at 1000 B.
-
-**5. Three of the original eight channel configs were exact duplicates.**
-`CAV_Good/Moderate/Bad` set `veinsmobility.x`, which TraCI overwrites. They
-produced bit-identical classifier probabilities to Baseline/Noise_Medium/
-Noise_High. Removed.
-
-**6. Three of the four fidelity columns were the same number.** `bit_exact_rate
-≡ delivery_rate` is real (802.11p delivers intact or not at all);
-`mean_edge_f1 ≡ delivery_rate` was a bug. Fixed.
-
-**7. Edge F1 had a free floor of ≈0.38.** The road/ego/lane skeleton is ~38% of
-every edge set, so a receiver that decoded a blank image scored 0.386. Added
-`actor_edge_f1`, which reads 0.000 for the same input.
+> Twelve markdown files exist across the two repositories. **This is the one to
+> read first.** A map of the rest is in §10.
 
 ---
 
-## 2. Current figures
+## 1. The project in one page
 
-### 2.1 `budget_sweep/01_rate_semantics.png` — the headline
+**The problem.** Self-driving cars would be safer if they told each other what
+they see. But a single camera frame is about 1.2 MB, and the radio link between
+two passing vehicles carries roughly 6 Mbit/s *shared between everyone in
+range*, for only a few tens of seconds. Sending pictures does not work.
 
-Two panels, x-axis **bytes per frame on a log scale**, channel-free.
+**The idea.** Send the *meaning* of the scene instead of the pixels. Convert the
+image into a **scene graph** — a small network of nodes (the ego car, the lanes,
+the road, each detected vehicle) joined by labelled edges (`isIn`,
+`toLeftOf`, `near_coll`) — compress it, transmit that, and rebuild it at the
+other end. This is called *semantic communication*.
 
-- **Left:** fraction of safety-critical relations (`near_coll` / `super_near`
-  involving ego) preserved.
-- **Right:** actor-relation F1, skeleton excluded.
+**What already existed.** A published framework, **GBSED** (Ribouh & Di Ngoma,
+2026), which does exactly this. Its authors report 99.9% compression against
+raw images and good fidelity at moderate signal strength.
 
-**How to read it.** The green star is GBSED: one point at 811 B, 1.00. The red
-and purple curves are WebP and JPEG as their byte budget rises. The dotted
-horizontal line is the original 1280×720 frame at unbounded budget. The green
-dashed vertical line marks GBSED's budget.
+**What was missing, and what we did.** GBSED was tested against an *abstract
+radio channel*: a signal-to-noise sweep with no moving vehicles, no packet loss,
+no network. And its headline compression figure was measured against *raw
+pixels*, which nobody actually transmits.
 
-**What to look for.** At GBSED's budget both curves sit at zero. They need to
-travel roughly two orders of magnitude right before touching the star's height.
-JPEG is pinned at exactly 0.000 through ×8 and then rises steeply — that
-cliff *is* the uniform-degradation mechanism made visible.
+We did two things:
 
-**Why the dotted line matters.** The ground truth was produced from the
-original frames, so the image arm *must* reach 1.000 at unbounded budget. It
-does. That is the experiment's own sanity check: the gap is bitrate, not a
-handicapped pipeline.
+1. **Put GBSED on a real vehicular network** — OMNeT++, Veins and SUMO over
+   IEEE 802.11p, with vehicles that move, separate, and eventually lose contact.
+2. **Built a fair comparison.** We re-encoded each image down to *exactly the
+   same number of bytes* as its scene graph, so identical packets cross an
+   identical radio and the only thing that differs is what those bytes mean.
 
-### 2.2 `comparison/01_gbsed_vs_image.png` — matched budget over the real channel
+**The headline answer.** At the same byte budget, the scene graph recovers
+**44 of 44** safety-critical relations; the image recovers **0 of 44**. Images
+need roughly **96× more bandwidth** to catch up.
 
-Three panels across the five channel conditions.
+---
 
-- **Left — delivery rate.** All three arms lie exactly on top of each other.
-  That overlap is the point: same bytes → same chunks → same packets → same
-  delivery. It proves the control held.
-- **Middle — actor-relation F1 | delivered.** GBSED at 1.000, both image arms
-  flat at 0.000.
-- **Right — safety-critical relations preserved.** GBSED at 1.00 until the
-  channel dies; image arms at 0.00 throughout.
+## 2. How the system works
 
-**How to read it.** Left panel = the channel. Middle and right = the
-representation. Identical inputs to the left panel, opposite outcomes in the
-other two.
+```
+  ROAD IMAGE (1280×720)
+        │
+        │  object detector finds cars, people, signs
+        ▼
+  SCENE GRAPH          nodes = road, ego car, 3 lanes, each detected actor
+        │              edges = relations (isIn, near_coll, toLeftOf, …)
+        │
+        │  encode():  adjacency tensor T [12 relations × N × N]  +  features F
+        ▼
+  SEMANTIC COMPRESSION    throw away relation types absent from this scene
+        │                 (typically drops 4–8 of the 12)
+        │
+        │  serialise to float16 bytes  →  ~800 bytes per frame
+        ▼
+  ┌─────────────────────────────────────────────┐
+  │  THE NETWORK  (what this project added)     │
+  │  chunk → Base64 → IEEE 802.11p broadcast    │
+  │  two SUMO vehicles, moving apart            │
+  └─────────────────────────────────────────────┘
+        │
+        ▼
+  DESERIALISE → SEMANTIC DECOMPRESSION → SCENE GRAPH′ → risk classifier
+```
 
-### 2.3 `comparison/02_payload_size.png` — payload sizes
+**One thing that surprises people:** node names are *never transmitted*. The
+receiver re-derives "car_0", "Left Lane" and so on from numeric label indices
+plus a positional rule. Both ends must agree on the same list of actor and
+relation names — a "shared codebook". This saves bytes but means reordering
+either list silently corrupts every previously encoded payload.
 
-Bar chart, log y-axis, total bytes for 20 frames, each bar labelled with its
-multiple of GBSED. GBSED 16,218 B; WebP and JPEG at matched budget ≈1×
-(by construction); full JPEG 24,839,399 B = 1531×.
+---
 
-### 2.4 `experiment_results_format/01_format_sweep.png` — v1 vs v2
+## 3. What we built, phase by phase
 
-Also copied to `comparison/03_format_sweep.png`.
+### Phase 1 — Get the semantic layer running standalone
 
-Two panels across channel conditions, four series: v1 and v2 at 1000 B and
-500 B chunks.
+The published code imports TensorFlow, Sionna and detectron2 — a heavy,
+GPU-specific stack, most of which is only needed for the radio simulation we
+were replacing anyway.
 
-**How to read it.** The 1000 B pair (dashed, pale) sit on top of each other —
-at that chunk size only 2 of 20 frames span more than one chunk, so there is
-nothing to reorder and the formats coincide. **That overlap is expected, not a
-null result.** The 500 B pair (solid) separate: red v1 falls to 0.80 then 0.50
-on the left panel while green v2 holds 1.00.
+- Consolidated the semantic chain into one importable module,
+  `gbsed_semantic.py`. The serialisation functions had been **duplicated
+  verbatim** between the pipeline script and an exploratory notebook — an
+  arrangement guaranteed to drift apart.
+- Stubbed out detectron2 (which requires CUDA) and substituted torchvision's
+  Faster R-CNN, which produces the same output and runs on CPU.
+- Result: the encode → decode round trip works with numpy and torch alone.
 
-**What to look for.** Left panel, Noise_Low and Noise_Medium. Same delivery
-count in both arms, same chunk lost — different content recovered.
+### Phase 2 — Bridge Python to the network simulator
 
-### 2.5 Per-frame scene graph renders
+- `tools/gbsed_encode.py`: a folder of images → one `.bin` payload per frame,
+  plus a `.meta.json` recording the true graph (ground truth for scoring) and a
+  manifest.
+- `tools/gbsed_decode.py`: received bytes → rebuilt scene graph → scored
+  against that ground truth.
+- The Veins application already moved files byte-exactly, so no C++ changes
+  were needed yet.
 
-| directory | contents |
+**First end-to-end run:** 20 frames, all delivered, all reconstructed perfectly.
+
+### Phase 3 — Make the simulation actually test something
+
+The first result was 100% delivery — because both vehicles drove the *same
+road at the same speed* and never moved apart. The simulation was measuring
+nothing.
+
+Changes to the Veins application (C++):
+
+| change | why |
 |---|---|
-| `scene_data_seq1/png/` | the sender's graphs, 20 frames |
-| `decoded_seq1/png/` | the receiver's reconstructions |
+| `startTime` / `sendInterval` became parameters | they were hard-coded, so the transmittable volume was a property of the source code rather than the experiment |
+| sender stamps its position into every message | without it, a lost packet has no distance attached and delivery cannot be analysed against range |
+| per-chunk `tx_log.csv` / `rx_log.csv` | this is what makes the range analysis possible at all |
+| vehicles now diverge at right angles at 8 m/s | so separation grows continuously and the sequence crosses the radio range limit mid-run |
 
-Compare `frame_XXXX_original.png` against `frame_XXXX_reconstructed.png`. For
-GBSED every delivered frame is identical — same nodes (`ego car`, `car_0`,
-`Left/Middle/Right Lane`, `Root Road`) and same edges.
+**Why 8 m/s specifically:** at the original 15 m/s the vehicles are removed from
+the simulation at t≈67 s, *before* the send queue finishes — which would confuse
+"lost to distance" with "the sender vanished". At 8 m/s they outlive the queue,
+so distance is the only variable.
+
+**Result:** 14 of 20 frames delivered. Measured range cliff at **488 m**.
+
+### Phase 4 — The channel sweep
+
+Five radio conditions (noise floor from −98 to −80 dBm) × two driving
+sequences, each decoded and fed to the downstream risk classifier.
+
+### Phase 5 — The pixel baseline (the core contribution)
+
+Three ways to send images instead of graphs:
+
+- **Full image** — the original JPEG as-is. Answers a feasibility question.
+- **Matched budget** — each image squeezed to *that frame's exact* GBSED byte
+  count, by searching over resolution and quality. Identical bytes ⇒ identical
+  packets ⇒ identical delivery. **This is the controlled experiment.**
+- **Budget sweep** — the budget multiplied by 1, 2, 4 … 128 with the channel
+  removed, producing a rate-versus-meaning curve.
+
+### Phase 6 — Graceful degradation (format v2)
+
+We noticed the decoder *already* tolerated a partial relation set — semantic
+decompression writes each delivered slice into its slot and leaves the rest
+zero. Only the byte layout threw that away: one flat vector, so losing any chunk
+destroyed the frame.
+
+Format **v2** packs whole relation slices into self-describing blocks the same
+size as a network chunk, safety relations first. A lost block now costs a
+relation *type*, not the frame. The receiver also had to be changed to hand over
+incomplete files, which it previously discarded.
 
 ---
 
-## 3. Superseded figures
+## 4. Results
 
-`result_graphs/*.png` predate the config and metric fixes. All seven plot the
-eight-config set, so all carry the duplicate-config artifact. Regenerate before
-using any of them.
+### 4.1 The semantic chain survives a real network
+
+Every delivered frame reconstructed **exactly** — same nodes, same edges — in
+every configuration, across both sequences.
+
+This is a stronger statement than the original SNR study can make. 802.11p
+either delivers a frame with a valid checksum or drops it, so there is no
+half-corrupted payload. **In a VANET, semantic degradation is about which
+frames arrive, not how damaged they are.**
+
+### 4.2 Fixed budget: the central result
+
+Same bytes, same channel, same frames — only the representation differs.
+
+| arm | delivered | graph recovered exactly | safety relations kept |
+|---|---|---|---|
+| **GBSED (scene graph)** | 70% | **70%** | **32/32** |
+| WebP at same bytes | 70% | **0%** | **0/32** |
+| JPEG at same bytes | 70% | **0%** | **0/32** |
+
+At that budget an image is **102×58 to 256×144 pixels at quality 1–5**. Across
+the 14 delivered frames the detector found 18 objects in the WebP versions and
+**zero** in the JPEG versions, against roughly 40 in the originals.
+
+WebP was given every advantage — it beats JPEG at low bitrate, came in *under*
+budget, and held 256×144 where JPEG collapsed. It still recovered nothing.
+
+### 4.3 How much more bandwidth would images need?
+
+| budget | bytes/frame | WebP safety kept | JPEG safety kept |
+|---|---|---|---|
+| ×1 | 800 | 0/44 | 0/44 |
+| ×4 | 2,900 | 16/44 | 0/44 |
+| ×16 | 12,100 | 34/44 | 2/44 |
+| ×64 | 43,500 | 42/44 | 40/44 |
+| ×128 | 83,000 | **44/44** | 42/44 |
+| **GBSED** | **811** | **44/44** | — |
+
+**WebP first matches GBSED at 77,809 bytes/frame — 96×.** JPEG never does
+within the sweep.
+
+Efficiency: GBSED spends **369 bytes per preserved safety relation**; WebP at
+the budget where it finally matches spends **35,368**.
+
+**The built-in validity check.** The sweep includes the *original* image at
+unbounded budget. Because the ground truth was generated from those images, the
+image arm **must** score 1.000 there — and it does. That is what proves the gap
+is a bandwidth effect and not a rigged image pipeline.
+
+### 4.4 Sending whole frames is impossible, not just wasteful
+
+| | GBSED | full JPEG |
+|---|---|---|
+| 20 frames | 16,218 B | 24,839,399 B (**1531×**) |
+| time to transmit | 55 s | 62,118 s (**17.3 hours**) |
+| vehicles in range for | 125 s | 125 s |
+| frames delivered | 14/20 | **0/20** |
+
+Measured, not extrapolated: **1.24% of the first frame arrived.**
+
+### 4.5 Graceful degradation works
+
+At 500-byte chunks, same bytes and same delivery:
+
+| condition | v1 safety recall | **v2 safety recall** |
+|---|---|---|
+| Noise_Low | 0.80 | **1.00** |
+| Noise_Medium | 0.50 | **1.00** |
+
+Cost: **zero extra chunks** on the air at 1000 B, one extra at 500 B.
+
+One frame shows the mechanism. It got 1 of its 2 chunks under both formats:
+
+```
+v1   safety 0/2   "payload differs from sent bytes"
+v2   safety 2/2   "partial: 1 block lost, 3/7 relations recovered"
+```
+
+Same chunk lost. v1 loses both safety relations; v2 keeps both **and says what
+is missing**.
+
+---
+
+## 5. Why it works — three separate mechanisms
+
+Usually collapsed into "compression"; they are not the same thing.
+
+**1. It compresses the right thing.** A JPEG spends bits on texture, lighting,
+road surface and sky — none of which the risk classifier reads. The scene graph
+spends them on who is where and how they relate, which is all it reads.
+
+**2. It degrades in a different dimension.** Image codecs blur everything
+uniformly, so below a threshold the detector fails on *everything at once* —
+that is the cliff in the sweep, where JPEG sits at exactly 0.000 through ×8 and
+then rises steeply. A scene graph splits into independent relation slices, so
+losing bits costs relation categories instead.
+
+**3. Semantic content is discrete.** A relation is a yes/no edge; a label is a
+small integer. There is no "slightly wrong `near_coll`". This is why every
+delivered frame scores exactly 1.000 and never 0.98.
+
+**The honest framing.** GBSED is *not better compression*. It transmits the
+**output** of perception rather than its **input**, and wins because the
+receiver's task needs only that output. The cost: the receiver can never do
+anything the sender's detector did not already encode. A raw image is
+task-agnostic; a scene graph is committed. The comparison is fair only because
+the downstream task was fixed in advance.
+
+---
+
+## 6. Problems we found and fixed
+
+All three would have distorted the conclusions.
+
+**Three of four fidelity metrics were the same number.** Delivery rate,
+bit-exact rate and mean edge F1 were identical in every row. Two causes:
+bit-exact ≡ delivery is *real* (802.11p never delivers a partly corrupt frame),
+but mean edge F1 ≡ delivery was a **bug** — the code filtered lost frames with
+`if r["edge_f1"]`, and their value is the *string* `"0.0"`, which Python treats
+as true. Lost frames entered the average as zeros, collapsing the metric.
+
+**Edge F1 had a free floor of 0.38.** Every graph contains the road, ego and
+three lanes joined by `isIn` edges regardless of image content — about 38% of a
+typical edge set. A receiver decoding a *blank image* scored 0.386. We added
+**actor-edge F1**, which ignores that skeleton and reads 0.000 for the same
+input.
+
+**Three of eight channel configs were exact duplicates.** They set a mobility
+parameter that TraCI overwrites every update. The proof is bit-identical
+classifier output — `0.9753320813179016` for both `Baseline` and `CAV_Good` —
+which can only come from identical inputs. Eight configs were really five noise
+floors. This also biased the accuracy summary, since duplicated conditions were
+counted twice.
+
+We also added **safety-relation recall** as the headline metric, and
+`n_frames_classified` so a flipped prediction can be told apart from the
+classifier simply seeing fewer frames.
+
+---
+
+## 7. Figures — what each one shows
+
+### Current
+
+| figure | shows | what to look for |
+|---|---|---|
+| `budget_sweep/01_rate_semantics.png` | **the headline.** Bytes/frame (log) vs meaning recovered | GBSED is the green star at 811 B; the image curves need ~10⁵ bytes to reach it. The dotted line is the validity control. |
+| `comparison/01_gbsed_vs_image.png` | fixed budget over the real channel | the three *overlapping* lines in the left panel **are the point** — the control held. The other two panels diverge completely. |
+| `comparison/02_payload_size.png` | payload sizes, log scale | the 1531× gap |
+| `experiment_results_format/01_format_sweep.png` | v1 vs v2 under partial loss | the 1000 B pair *coinciding* is expected, not a null result — at that size only 2 of 20 frames span multiple chunks |
+| `report/figures/architecture.png` | the full pipeline | green = transmitter, blue = our network work, red = receiver |
+| `report/figures/scenario.png` | SUMO geometry + measured delivery vs distance | separation grows at 10.35 m/s; last chunk heard at 488 m |
+| `scene_data_seq1/png/` vs `decoded_seq1/png/` | per-frame graphs, sent vs received | identical for every delivered frame |
+
+### Superseded — regenerate before using
+
+All seven `result_graphs/*.png` predate the fixes and plot the eight-config set,
+so all carry the duplicate artefact.
 
 | figure | problem |
 |---|---|
-| `01_delivery_rate_by_config.png` | **Sawtooth artifact.** Plots configs in list order, so `CAV_Good` jumps back to Baseline level after `Noise_High`, making it look like a recovery. It is Baseline replotted. |
-| `02_bit_exact_rate_by_config.png` | **Redundant.** Bit-exact rate is identically equal to delivery rate — 802.11p never delivers a partially corrupt frame. Same curve as 01. |
-| `03_fidelity_metrics_overview.png` | **Three identical panels.** Delivery rate, bit-exact rate and mean edge F1 are the same number in every row. Plus the sawtooth. The clearest illustration of both bugs — worth keeping as a "before" exhibit. |
-| `04_prediction_correctness_heatmap.png` | Duplicate columns; `CAV_Extreme` missing because the sweep aborted on it. |
-| `05_true_class_confidence_trend.png` | Duplicate columns. The non-monotonic tail (0.056 → 0.202) is real but confounded: it reflects the classifier seeing 1 frame instead of 5, not worse semantics. |
-| `06_accuracy_summary.png` | **Biased.** Accuracy is computed over configs, so duplicated conditions are counted twice. seq1 reads 3/7 = 0.43 where the deduplicated value is 2/4 = 0.50; seq2 reads 2/7 = 0.29 against 1/4 = 0.25. |
-| `07_fidelity_vs_confidence_scatter.png` | Duplicate points sit exactly on top of each other, so the scatter overstates how many independent observations there are. |
+| `01_delivery_rate_by_config.png` | sawtooth: `CAV_Good` appears to recover, but it is `Baseline` replotted |
+| `02_bit_exact_rate_by_config.png` | redundant — identical to 01 |
+| `03_fidelity_metrics_overview.png` | **three panels, one curve.** Kept in the report as a "before" exhibit |
+| `04_prediction_correctness_heatmap.png` | duplicate columns; `CAV_Extreme` missing (the sweep aborted on it) |
+| `05_true_class_confidence_trend.png` | duplicate columns; the non-monotonic tail is real but confounded by frame count |
+| `06_accuracy_summary.png` | **biased** — duplicated conditions counted twice (seq1 reads 3/7 = 0.43 where the true value is 2/4 = 0.50) |
+| `07_fidelity_vs_confidence_scatter.png` | duplicate points overlap, overstating the number of observations |
 
 ---
 
-## 4. Data files
+## 8. Data files
 
 | file | contents |
 |---|---|
-| `budget_sweep/budget_sweep.csv` | the rate–semantics curve: bytes/frame, safety recall, actor F1, detections, bytes per relation |
-| `comparison/comparison.csv` | matched-budget over the channel, per arm per config |
-| `experiment_results_format/format_results.csv` | v1 vs v2 at both chunk sizes |
-| `experiment_results/results_matrix.csv` | the original GBSED sweep (now with corrected columns) |
-| `experiment_results_image/image_results_matrix.csv` | the pixel arms over the channel |
-| `experiment_results*/decoded_*/fidelity.csv` | per-frame detail for every run |
-| `experiment_results*/received_*/{tx,rx}_log.csv` | per-chunk logs with distance |
+| `budget_sweep/budget_sweep.csv` | the rate–meaning curve |
+| `comparison/comparison.csv` | matched budget over the channel |
+| `experiment_results_format/format_results.csv` | v1 vs v2 |
+| `experiment_results/results_matrix.csv` | the GBSED channel sweep |
+| `experiment_results_image/image_results_matrix.csv` | the pixel arms |
+| `*/decoded_*/fidelity.csv` | per-frame detail for every run |
+| `*/received_*/{tx,rx}_log.csv` | per-chunk logs with distance |
 
-Per-frame columns worth knowing: `status` (EXACT / DEGRADED / CORRUPT / LOST),
-`actor_edge_f1`, `risky_preserved` / `risky_orig`, `blocks_missing` and
-`relations_recovered` (v2 only), `distance_m`, `chunks_heard`.
+Useful per-frame columns: `status` (EXACT / DEGRADED / CORRUPT / LOST),
+`actor_edge_f1`, `risky_preserved`/`risky_orig`, `distance_m`, and for v2
+`blocks_missing` / `relations_recovered`.
 
 ---
 
-## 5. Regenerating
+## 9. Running everything
+
+Set once:
 
 ```bash
-# 1. rate-semantics curve (channel-free, ~8 min)
+export GBSED_VEINS_APP=~/Documents/gbsed_veins/src/veins/modules/application/gbsed/GBSEDApp
+```
+
+**Normal run** (images → transmit → score):
+
+```bash
+# 1. clear old artefacts (frames are numbered and never deleted)
+rm -rf scene_data decoded "$GBSED_VEINS_APP/scene_data" "$GBSED_VEINS_APP/received"
+
+# 2. encode
+python tools/gbsed_encode.py --images images_seq1 --out scene_data --visualize
+
+# 3. point the simulation at them (writes the filePath line from the manifest)
+python - <<'PY'
+import json, os, re, pathlib
+p = pathlib.Path(os.environ["GBSED_VEINS_APP"]) / "omnetpp.ini"
+fp = json.load(open("scene_data/manifest.json"))["omnetpp_filePath"]
+p.write_text(re.sub(r'^\*\.node\[0\]\.appl\.filePath = .*$',
+                    '*.node[0].appl.filePath = "%s"' % fp, p.read_text(), flags=re.M))
+PY
+
+# 4. simulate   (add -u Qtenv for the GUI)
+cd ~/Documents/gbsed_veins && ./run_gbsed.sh
+
+# 5. decode and score
+cd - && python tools/gbsed_decode.py --meta scene_data --out decoded --visualize
+```
+
+**Reproduce the experiments:**
+
+```bash
 python tools/budget_sweep.py --meta scene_data_seq1 --images images_seq1 --out budget_sweep
-
-# 2. matched-budget payload sets
-python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 \
-    --mode matched --codec webp --out image_data_seq1_webp
-python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 \
-    --mode matched --codec jpeg --out image_data_seq1_jpeg
-python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 \
-    --mode full --out image_data_seq1_full
-
-# 3. sweep the pixel arms over the channel, then build the comparison
+python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 --mode matched --codec webp --out image_data_seq1_webp
+python tools/image_encode.py --meta scene_data_seq1 --images images_seq1 --mode matched --codec jpeg --out image_data_seq1_jpeg
 ./tools/run_image_baseline.sh image_data_seq1_webp image_data_seq1_jpeg
 python tools/compare_gbsed_vs_image.py --out comparison
 
-# 4. slice-aligned format
-python tools/gbsed_encode.py --images images_seq1 --out scene_data_seq1_v2_cs500 \
-    --format v2 --chunk-size 500
-./tools/run_format_sweep.sh
-python tools/plot_format_sweep.py
+python tools/gbsed_encode.py --images images_seq1 --out scene_data_seq1_v2_cs500 --format v2 --chunk-size 500
+./tools/run_format_sweep.sh && python tools/plot_format_sweep.py
+```
 
-# 5. the original GBSED sweep (paths inside need editing for this machine)
-./tools/run_experiment_matrix.sh
-python generate_result_graphs.py        # regenerate the superseded set
+**Build the report:**
+
+```bash
+cd report && latexmk -pdf main.tex
 ```
 
 ---
 
-## 6. Open items
+## 10. Map of the documentation
 
-1. **No negative class.** Both sequences are labelled risky, so `match` cannot
-   distinguish a working classifier from one that always predicts 1, and no
-   false-positive rate is computable. Set aside by agreement; it bounds what
-   the task-level numbers can claim.
-2. **`result_graphs/` needs regenerating** against the deduplicated configs and
-   corrected metrics.
-3. **v2 is not the default.** `--format v1` still is, to stay byte-identical to
-   `pipeline.GBSED._format_storage_`. With `writePartialFiles` on, a truncated
-   *v1* payload parses into a silently wrong graph — prefer v2 when partial
-   writing is enabled.
-4. **The v2 effect needs denser scenes or smaller chunks** to show at 1000 B.
-   Slices grow as N², so urban scenes would reach it naturally.
-5. **Payloads are reproducible as graphs, not bytes.** Re-encoding on another
-   platform gave 17/20 byte-identical payloads; the rest differ by one ULP in a
-   single float16 feature. Graphs were identical in all 20.
+Paths below are relative to this repository, except those beginning
+`gbsed_veins/`, which live in the **Veins repository**. The documented layout
+puts the two side by side; on the development machine they are at
+`~/Desktop/PythonEnvs/gbsed` and `~/Documents/gbsed_veins`.
+
+| file | for | read when |
+|---|---|---|
+| **`overview.md`** (this file) | everyone | **first** |
+| `comparison/ANALYSIS.md` | the full method and findings | you need the detail behind §4–6 |
+| `report/main.pdf` | the graded deliverable | submission |
+| `report/PRESENTATION.md` | slide content, timing, Q&A prep | before the defence |
+| `report/README.md` | how to build the report, what to fill in | before submission |
+| `tools/README.md` | the encoder and decoder CLIs | using the tools |
+| `gbsed_veins/RUNNING.md` | setup on a new machine, WSL notes | onboarding a teammate |
+| `gbsed_veins/overview.md` | codebase orientation, invariants | an AI assistant, or deep code work |
+| `gbsed_veins/GBSED.md` | macOS/opp_env build history | toolchain trouble |
+| `CLAUDE.md` (both repos) | auto-loaded pointers | — |
+| `READING_GUIDE.md`, `README.md` | inherited from upstream | background on the original code |
 
 ---
 
-## 7. Where things live
+## 11. Still open
 
-| path | what |
-|---|---|
-| `comparison/ANALYSIS.md` | the full writeup: design, results, why it works, every issue found |
-| `gbsed_semantic.py` | the shared chain, both payload formats, all metrics |
-| `tools/` | the CLIs and sweep scripts; see `tools/README.md` |
-| `../gbsed_veins/overview.md` | codebase orientation, invariants, machine setup |
-| `../gbsed_veins/RUNNING.md` | step-by-step run guide |
+1. **No negative class.** Both sequences are labelled risky, so accuracy cannot
+   distinguish a working classifier from one that always says "risky". This is
+   the single biggest limitation of the task-level results.
+2. **`result_graphs/` needs regenerating** against the deduplicated configs and
+   corrected metrics.
+3. **v2 is not the default** — v1 still is, to stay byte-identical to the
+   published implementation. Note that with partial-file writing enabled, a
+   truncated *v1* payload parses into a silently wrong graph; prefer v2 there.
+4. **The v2 benefit needs small chunks or denser scenes** to show at 1000 B.
+5. **Payloads reproduce as graphs, not bytes.** Re-encoding on another platform
+   gave 17/20 byte-identical payloads, the rest differing by one unit in the
+   last place of a single float16 feature. All 20 graphs were identical.
+6. **Two vehicles only** — no medium-access contention, which is where 802.11p
+   gets genuinely hard.
+
+---
+
+## 12. Repositories
+
+- `https://github.com/sahil0319/gbsed` — semantic layer, tooling, experiments,
+  report
+- `https://github.com/Loona6/gbsed_veins` — Veins application and simulation
+  scenario

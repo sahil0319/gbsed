@@ -3,8 +3,9 @@
 This repository is the Python semantic layer: images → scene graphs →
 compressed, serialized payloads, and back again.
 
-**For results, figures and findings, read `overview.md`**, and
-`comparison/ANALYSIS.md` for the full writeup.
+**Start with `overview.md`** — it covers the whole project start to finish:
+what was built, every experiment, all results, and a map of the other docs.
+`comparison/ANALYSIS.md` has the detailed method behind the results.
 
 **If you are working on the Veins/OMNeT++ simulation side, read
 `../gbsed_veins/overview.md` first** — it covers the architecture, the
